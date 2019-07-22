@@ -34,7 +34,7 @@ export default class Mycloud extends Component{
 		}
 	}
 	async componentDidMount(){ 
-		console.log(this.props)
+		//console.log(this.props)
 		if(localStorage.getItem('auth-token')){
 			window.document.title ='mycloud'
 			this.updateDashBoard(this.props.match.params.id)
@@ -44,7 +44,7 @@ export default class Mycloud extends Component{
 		try{
 			this.setState({loadingDashboard:true})
 			const response = await api.get(`mycloud/${id}`)
-			console.log(response)
+			//console.log(response)
 			if(response.status===200){
 				this.setState({
 					idFolder 			  : response.data._id,
@@ -61,7 +61,7 @@ export default class Mycloud extends Component{
 		}		
 	}
 	handlerErro = async err => {
-		console.log(err.message);
+		//console.log(err.message);
 		this.setState({loadingDashboard:false})
 		if(err.message==='Network Error'){
 			this.setState({erroConectionInternet:true})
@@ -134,7 +134,7 @@ export default class Mycloud extends Component{
 					/*const io = socket('http://localhost:3001')
 					io.emit('connectRoom',this.state.idFolder)
 					io.on('folder',data=>{
-						console.log(data)
+						//console.log(data)
 					})*/
 					this.updateDashBoard(response.data._id)
 				}
@@ -177,9 +177,9 @@ export default class Mycloud extends Component{
 				})
 				Swal.showLoading()
 				const response = await api.put(`mycloud/update/folder/${id}`,request)
-				console.log(response.data) 
+				//console.log(response.data) 
 				if(response.status===200){
-					console.log('deu certo renomear')
+					//console.log('deu certo renomear')
 					const Toast = Swal.mixin({
 						toast: true,
 						position: 'bottom-start',
@@ -206,7 +206,7 @@ export default class Mycloud extends Component{
 	}
 	downloadFolder = async (e,id,idFolderFather) =>{
 		try{
-			console.log(idFolderFather);
+			//console.log(idFolderFather);
 			if(!this.state.showSnackBar){
 				this.setState({
 					msgSnackBar :`compactando pasta: 0.00 %`,
@@ -218,11 +218,11 @@ export default class Mycloud extends Component{
 				let reponseDataa = await api.get(`mycloud/folder/${id}`)
 				let sizeFile = reponseDataa.data.size
 				sizeInitial = sizeInitial - reponseDataa.data.size
-				console.log('inicial: '+sizeInitial);
+				//console.log('inicial: '+sizeInitial);
 				const showInfo = setInterval( async function(){
 					
 					let reponseInterval = await api.get(`mycloud/folder/${idFolderFather}`)
-					console.log(reponseInterval.data.size);
+					//console.log(reponseInterval.data.size);
 					
 					let percentual = ((reponseInterval.data.size-sizeInitial)/sizeFile*100).toFixed(2)
 					
@@ -289,7 +289,7 @@ export default class Mycloud extends Component{
 				})
 				Swal.showLoading()
 				const response = await api.put(`/mycloud/delete/folder/${id}`)
-				console.log(response)
+				//console.log(response)
 				if(response.status===200){
 					const Toast = Swal.mixin({
 						toast: true,
@@ -317,14 +317,14 @@ export default class Mycloud extends Component{
 	getInfoFolder = async (e,id) => {
 		try{
 			const response = await api.get(`mycloud/folder/${id}`)
-			console.log(response.data)
+			//console.log(response.data)
 			
 			if(response.status===200){
 				const folder = response.data.folder
 				const size = response.data.size
 				folder.createdAt = new Date(folder.createdAt)
 				folder.updatedAt = new Date(folder.updatedAt)
-				console.log(folder.createdAt)
+				//console.log(folder.createdAt)
 				const dia = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quita-feira','Sexta-feira','Sábado']
 				const mes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 				let createdAt = folder.createdAt
@@ -355,15 +355,15 @@ export default class Mycloud extends Component{
 		try{
 			if(!this.state.showSnackBar){
 				const file = e.target.files[0]
-				console.log(file);
+				//console.log(file);
 				const sizeFile = (file.size/1024/1024).toFixed(2)
-				console.log(sizeFile);
+				//console.log(sizeFile);
 				const data = new FormData()
 				data.append('file',file)
 				if (file) {
 					let reponseData = await api.get(`mycloud/folder/${this.state.idFolder}`)
 					const sizeInitial = reponseData.data.size
-					console.log('tamnho inicial: '+ sizeInitial);
+					//console.log('tamnho inicial: '+ sizeInitial);
 					this.setState({
 						msgSnackBar :`${file.name} - 0.00 %`,
 						showSnackBar:true
@@ -375,7 +375,7 @@ export default class Mycloud extends Component{
 						this.setState({
 							msgSnackBar :`Fazendo upload de ${file.name} - ${sizeFolder} %`,
 						})
-						console.log(sizeFolder);
+						//console.log(sizeFolder);
 					}.bind(this), 1000);
 					const response = await api.post(`/mycloud/${idFolderFhader}/store/file`,data)
 					clearInterval(showInfo);
@@ -418,7 +418,7 @@ export default class Mycloud extends Component{
 	openFile = async (e,id) =>{
 		try{
 			const response = await api.get(`mycloud/file/${id}`)
-			console.log(response);
+			//console.log(response);
 			if(response.status ===200){
 				const file = response.data
 				const [type, ext]= file.mimetype.split('/')
@@ -500,9 +500,9 @@ export default class Mycloud extends Component{
 				})
 				Swal.showLoading()
 				const response = await api.put(`mycloud/update/file/${id}`,request)
-				console.log(response.data) 
+				//console.log(response.data) 
 				if(response.status===200){
-					console.log('deu certo renomear')
+					//console.log('deu certo renomear')
 					const Toast = Swal.mixin({
 						toast: true,
 						position: 'bottom-start',
@@ -541,9 +541,9 @@ export default class Mycloud extends Component{
 			Swal.showLoading()
 			//window.open(file_url,'_self')
 			const response = await api.get(file_url,{responseType: 'blob'})
-			console.log(response.data)
+			//console.log(response.data)
 			if(response.status===200){
-				console.log('deu certo o download')
+				//console.log('deu certo o download')
 				//----
 				const url = window.URL.createObjectURL(new Blob([response.data]));
 				const link = document.createElement('a');
@@ -597,7 +597,7 @@ export default class Mycloud extends Component{
 				})
 				Swal.showLoading()
 				const response = await api.put(`/mycloud/delete/file/${id}`)
-				console.log(response)
+				//console.log(response)
 				if(response.status===200){
 					const Toast = Swal.mixin({
 						toast: true,
@@ -620,13 +620,13 @@ export default class Mycloud extends Component{
 	getInfoFile = async (e,id) =>{
 		try{
 			const response = await api.get(`mycloud/file/${id}`)
-			console.log(response.data)
+			//console.log(response.data)
 			
 			if(response.status===200){
 				const file = response.data
 				file.createdAt = new Date(file.createdAt)
 				file.updatedAt = new Date(file.updatedAt)
-				console.log(file.createdAt)
+				//console.log(file.createdAt)
 				const dia = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quita-feira','Sexta-feira','Sábado']
 				const mes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro']
 				let createdAt = file.createdAt
@@ -680,9 +680,9 @@ export default class Mycloud extends Component{
 
 	}
 	setHistory = e =>{
-		console.log('evento history');
+		//console.log('evento history');
 		e.preventDefault()
-		console.log(e)
+		//console.log(e)
 		this.updateDashBoard(this.props.match.params.id)
 	}
 	render(){
@@ -818,11 +818,11 @@ export default class Mycloud extends Component{
 						        )
 						    }):null}
 
-							{files ? files.map(file => {
-								console.log(file.mimetype)
+							{files ? files.map((file,i) => {
+								//console.log(file.mimetype)
 								let [mimetype,ext] = file.mimetype.split('/')
 								return(
-					            <div className='col-6 col-sm-4 col-md-3 col-lg-2'>
+					            <div key={i.toString()} className='col-6 col-sm-4 col-md-3 col-lg-2'>
 						            <div className="btn-group ">
 						                <button onDoubleClick={e => this.openFile(e,file._id)} type="button" className="btn btn-primary botaoPasta">
 										<h1 className="font-light text-white">
@@ -889,7 +889,7 @@ export default class Mycloud extends Component{
 						ContentProps={{
 						'aria-describedby': 'message-id',
 						}}
-						message={<span>Falha na conexão com a internet</span>}
+						message={<span>Falha na conexão com o servidor</span>}
 
 			/>
 

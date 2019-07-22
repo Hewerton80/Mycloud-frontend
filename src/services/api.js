@@ -1,7 +1,9 @@
 import axios from 'axios'
 
 const api = axios.create({
-	baseURL : 'http://localhost:3001'
+	baseURL: 'https://mycloud-backend.herokuapp.com'
+	//baseURL : 'http://hewertonnn-ga.umbler.net'
+	//baseURL : 'http://localhost:3001'
 })
 
 api.interceptors.request.use(async config =>{

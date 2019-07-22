@@ -496,10 +496,10 @@ export default class Lixeira extends Component{
 						        </div>
 						    )):null}
 
-							{files ? files.map(file => {
+							{files ? files.map((file,i) => {
 								let [mimetype,ext] = file.mimetype.split('/')
 								return(
-					            <div className='col-6 col-sm-4 col-md-3 col-lg-2'>
+					            <div key={i.toString()} className='col-6 col-sm-4 col-md-3 col-lg-2'>
 						            <div className="btn-group ">
 						                <button onDoubleClick={e => this.openFile(e,file._id)} type="button" className="btn btn-primary botaoPasta">
 										<h1 className="font-light text-white">

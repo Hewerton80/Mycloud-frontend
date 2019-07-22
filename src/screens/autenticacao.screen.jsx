@@ -5,6 +5,7 @@ import SimpleReactValidator from 'simple-react-validator'
 import ImgLoading from '../assets/img/loading2.gif'
 import Imglogo from '../assets/img/logo-mycloud.png'
 import Imguser from '../assets/img/user.jpg'
+
 export default class Login extends Component{
     constructor(props){
         super(props)
@@ -20,7 +21,7 @@ export default class Login extends Component{
             emailRegister:'',
             passwordRegister:'',
             confirmPasswordRegister:'',
-           
+            requesting:false,
 
         }
         this.validator = new SimpleReactValidator({
@@ -49,14 +50,16 @@ export default class Login extends Component{
     login = async e => {
         e.preventDefault()
         this.setState({msgErroLogin:false})
-        if (this.validator.allValid()) {
+        if (this.validator.fieldValid('emailLogin') && this.validator.fieldValid('passwordLogin')) {
             const request = {
                 email: this.state.emailLogin,
                 password : this.state.passwordLogin
             }
 
             try{
+                this.setState({requesting:true})
                 const response = await api.post('auth/authenticate',request)
+                this.setState({requesting:false})
                 if(response.status===200){
                     localStorage.setItem('auth-token',response.data.token)
                     localStorage.setItem('user.name',response.data.user.name)
@@ -65,13 +68,15 @@ export default class Login extends Component{
                     localStorage.setItem('id.trash',response.data.user.folders[1]._id)
                     this.setState({
                         redirect : `/mycloud/${response.data.user.folders[0]._id}`,
+
                     })
                     //window.location.href = `/mycloud/${this.state.id}`
                 }
             }
             catch(err){
+                this.setState({requesting:false})
                 if(err.message === 'Network Error'){
-                    this.setState({msgErroLogin:'Falha na conexão com a internet'})
+                    this.setState({msgErroLogin:'Falha na conexão com o servidor'})
                 }
                 else if(err.message === 'Request failed with status code 400'){
                     this.setState({msgErroLogin:'Email e/ou senha inválidas'})
@@ -79,7 +84,7 @@ export default class Login extends Component{
                 else{
                     this.setState({msgErroLogin:'Erro no login'})
                 }
-                console.log(Object.getOwnPropertyDescriptors(err));
+                //console.log(Object.getOwnPropertyDescriptors(err));
             }
         } else {
             this.validator.showMessages();
@@ -91,15 +96,16 @@ export default class Login extends Component{
     register = async e => {
         e.preventDefault()
         this.setState({msgErroRegister:''})
-        if (this.validator.allValid()) {
+        if (this.validator.fieldValid('nameRegister') && this.validator.fieldValid('emailRegister') && this.validator.fieldValid('passwordRegister') && this.validator.fieldValid('confirmPasswordRegister')) {
             const request = {
                 name:this.state.nameRegister,
                 email: this.state.emailRegister,
                 password: this.state.passwordRegister,
             }
             try{
+                this.setState({requesting:true})
                 const response = await api.post('auth/register',request)
-                console.log(response.data.token)
+                //console.log(response.data.token)
                 if(response.status===200){
                     localStorage.setItem('auth-token',response.data.token)
                     localStorage.setItem('user.name',response.data.user.name)
@@ -112,8 +118,9 @@ export default class Login extends Component{
                 }
             }
             catch(err){
+                this.setState({requesting:false})
                 if(err.message === 'Network Error'){
-                    this.setState({msgErroRegister:'Falha na conexão con a internet'})
+                    this.setState({msgErroRegister:'Falha na conexão com o servidor'})
                 }
                 else if(err.message === 'Request failed with status code 400'){
                     this.setState({msgErroRegister:'Já existe um usuário cadastrado com o email informado'})
@@ -121,7 +128,7 @@ export default class Login extends Component{
                 else{
                     this.setState({msgErroRegister:'Erro no cadastro'})
                 }
-                console.log(Object.getOwnPropertyDescriptors(err));
+                //console.log(Object.getOwnPropertyDescriptors(err));
             }
         } 
         else{
@@ -152,7 +159,7 @@ export default class Login extends Component{
     }
     render(){
         const {redirect,formLogin,formRegister} = this.state
-        const {emailLogin,passwordLogin,msgErroLogin,msgErroRegister} = this.state
+        const {emailLogin,passwordLogin,msgErroLogin,msgErroRegister,requesting} = this.state
         const {emailRegister,nameRegister,passwordRegister,confirmPasswordRegister} = this.state
         if(redirect){
             return <Redirect to={redirect} exact={true}/>
@@ -175,7 +182,7 @@ export default class Login extends Component{
                                             </div>
                                         :null}
                                         <div style={{color:'red'}}>
-                                            {this.validator.message('email', emailLogin, 'required|email')}
+                                            {this.validator.message('emailLogin', emailLogin, 'required|email')}
                                         </div>
 
                                         <div className="input-group mb-3">
@@ -186,7 +193,7 @@ export default class Login extends Component{
                                         </div>
                                         
                                         <div style={{color:'red'}}>
-                                            {this.validator.message('password', passwordLogin, 'required|min:6')}
+                                            {this.validator.message('passwordLogin', passwordLogin, 'required')}
                                         </div>
 
                                         <div className="input-group mb-3"> 
@@ -201,7 +208,14 @@ export default class Login extends Component{
                                     <div className="col-12">
                                         <div className="form-group">
                                             <div className="p-t-20 divbuttons">
-                                                <button className="btn btn-block btn-lg btn-info" >Fazer login</button>
+                                                {requesting?
+                                                <button className="btn btn-block btn-lg btn-info" >
+                                                    <img src={ImgLoading} width='20px'/>
+                                                </button>:
+                                                <button className="btn btn-block btn-lg btn-info" >
+                                                    Fazer login
+                                                </button>}
+                                                
                                             </div>
                                         </div>
                                     </div>
@@ -233,7 +247,7 @@ export default class Login extends Component{
                                             </div>
                                         :null}
                                         <div style={{color:'red'}}>
-                                            {this.validator.message('name', nameRegister, 'required|alpha_space')}
+                                            {this.validator.message('nameRegister', nameRegister, 'required|alpha_space')}
                                         </div>
                                         <div className="input-group mb-3">
                                             <div className="input-group-prepend">
@@ -243,7 +257,7 @@ export default class Login extends Component{
                                         </div>
 
                                         <div style={{color:'red'}}>
-                                            {this.validator.message('email', emailRegister, 'required|email')}
+                                            {this.validator.message('emailRegister', emailRegister, 'required|email')}
                                         </div>
                                         <div className="input-group mb-3">
                                             <div className="input-group-prepend">
@@ -252,7 +266,7 @@ export default class Login extends Component{
                                             <input onChange={e => {this.setState({emailRegister:e.target.value}) }} value={emailRegister} type="text" className="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" required/>
                                         </div>
                                         <div key={1000} style={{color:'red'}}>
-                                            {this.validator.message('password', passwordRegister, 'required|min:6')}
+                                            {this.validator.message('passwordRegister', passwordRegister, 'required|min:6')}
                                         </div>
                                         <div key={1008} className="input-group mb-3">
                                             <div className="input-group-prepend">
@@ -261,7 +275,7 @@ export default class Login extends Component{
                                             <input key={1004} onChange={e => {this.setState({passwordRegister:e.target.value})}} value={passwordRegister.toString()} type="password" className="form-control form-control-lg" placeholder="Senha" aria-label="Password" aria-describedby="basic-addon1" required/>
                                         </div>
                                         <div key={1001} style={{color:'red'}}>
-                                            {this.validator.message('password', confirmPasswordRegister, 'required|min:6|passowordEqual')}
+                                            {this.validator.message('confirmPasswordRegister', confirmPasswordRegister, 'required|min:6|passowordEqual')}
                                         </div>
                                         <div key={1009} className="input-group mb-3">
                                             <div className="input-group-prepend">
@@ -275,8 +289,13 @@ export default class Login extends Component{
                                     <div className="col-12">
                                         <div className="form-group">
                                             <div className="p-t-20 divbuttons">
-                                                <button className="btn btn-block btn-lg btn-info" >Fazer cadastro</button>
-                                            </div>
+                                                {requesting?
+                                                <button className="btn btn-block btn-lg btn-info" >
+                                                    <img src={ImgLoading} width='20px'/>
+                                                </button>:
+                                                <button className="btn btn-block btn-lg btn-info" >
+                                                    Fazer cadastro
+                                                </button>}                                            </div>
                                         </div>
                                     </div>
                                 </div>
