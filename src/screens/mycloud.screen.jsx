@@ -703,7 +703,7 @@ export default class Mycloud extends Component{
 			    <header  className="topbar" data-navbarbg="skin5">
 			        <nav className="navbar top-navbar navbar-expand-md navbar-dark">
 		                <div  className="navbar-header" data-logobg="skin5">
-		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" href='#' onClick={e => {e.preventDefault()}}><i className="ti-menu ti-close"></i></a>
+		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i className="ti-menu ti-close"></i></a>
 		                    <a  className="navbar-brand" href='#' onClick={e => {e.preventDefault()}}>
 		                        <b className="logo-icon p-l-10">
 	                            	<h1><i className="fab fa-cloudversify"></i></h1>
