@@ -706,7 +706,7 @@ export default class Mycloud extends Component{
 		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i className="ti-menu ti-close"></i></a>
 		                    <a  className="navbar-brand" href='#' onClick={e => {e.preventDefault()}}>
 		                        <b className="logo-icon p-l-10">
-	                            	<h1><i className="fab fa-cloudversify"></i></h1>
+	                            	
 		                        </b>
 		                        <span className="logo-text">
 		                            <img src={Imglogo} alt="homepage" className="light-logo" />   
@@ -716,8 +716,8 @@ export default class Mycloud extends Component{
 		                </div>
 		             	<div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
 		             		<ul  className="navbar-nav float-left mr-auto">
-		                        <li key='1' className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
-		                        <li key='2' className="nav-item dropdown">
+		                        <li className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
+		                        <li className="nav-item dropdown">
 		                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 		                            	<span className="d-none d-md-block"><i className="fas fa-plus"></i> Novo <i className="fa fa-angle-down"></i></span>
 		                            	<span  className="d-block d-md-none"><i className="fa fa-plus"></i></span>   
@@ -728,7 +728,7 @@ export default class Mycloud extends Component{
 		                            	<input   type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} style={{display: "none"}}/>
 		                            </div>
 		                        </li>
-		                        <li key='3' className="nav-item search-box"> <a className="nav-link waves-effect waves-dark" href="javascript:void(0)"><i className="ti-search"></i></a>
+		                        <li className="nav-item search-box"> <a className="nav-link waves-effect waves-dark" href="javascript:void(0)"><i className="ti-search"></i></a>
 		                            <form className="app-search position-absolute">
 		                                <input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
 		                            </form>
@@ -736,7 +736,7 @@ export default class Mycloud extends Component{
 		             		</ul>
 
 		             		<ul  className="navbar-nav float-right">
-		                        <li key='1' className="nav-item dropdown">
+		                        <li className="nav-item dropdown">
 		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
 		                            <div  className="dropdown-menu dropdown-menu-right user-dd animated">
 		                            	<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
@@ -756,8 +756,8 @@ export default class Mycloud extends Component{
 					<div className="scroll-sidebar">
 						<nav className="sidebar-nav">
 							<ul id="sidebarnav" className="p-t-30">
-	                    		<li key='1' className="sidebar-item selected"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'inicio')} aria-expanded="false"><i className="fas fa-cloud"></i><span className="hide-menu">Início</span></a></li>
-	                    		<li key='2' className="sidebar-item"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'lixeira')} aria-expanded="false"><i className="fas fa-trash"></i><span className="hide-menu">Lixeira</span></a></li>
+	                    		<li className="sidebar-item selected"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'inicio')} aria-expanded="false"><i className="fas fa-cloud"></i><span className="hide-menu">Início</span></a></li>
+	                    		<li className="sidebar-item"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'lixeira')} aria-expanded="false"><i className="fas fa-trash"></i><span className="hide-menu">Lixeira</span></a></li>
 	                    		
 							</ul>
 						</nav>
