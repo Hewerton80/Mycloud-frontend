@@ -1,11 +1,11 @@
 import React,{Component} from 'react'
-import api from '../services/api'
+import api from '../../services/api'
 import Swal from 'sweetalert2'
 import Snackbar from '@material-ui/core/Snackbar'
 
-import ImgLoading from '../assets/img/loading2.gif'
-import Imglogo from '../assets/img/logo-mycloud.png'
-import Imguser from '../assets/img/user.jpg'
+import ImgLoading from '../../assets/img/loading2.gif'
+import Imglogo from '../../assets/img/logo-mycloud.png'
+import Imguser from '../../assets/img/user.jpg'
 //import socket from 'socket.io-client'
 import { Redirect } from "react-router-dom";
 export default class Lixeira extends Component{

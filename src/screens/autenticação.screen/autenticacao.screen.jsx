@@ -1,10 +1,12 @@
 import React,{Component} from 'react'
-import api from '../services/api'
-import {Redirect } from "react-router-dom";
+import api from '../../services/api'
+import {Redirect,Link } from "react-router-dom";
 import SimpleReactValidator from 'simple-react-validator'
-import ImgLoading from '../assets/img/loading2.gif'
-import Imglogo from '../assets/img/logo-mycloud.png'
-import Imguser from '../assets/img/user.jpg'
+import TeplateAutenticacao from '../../components/templates/autenticação.template'
+import FormLogin from '../../components/ui/forms/formLogin'
+import ImgLoading from '../../assets/img/loading2.gif'
+import Imglogo from '../../assets/img/logo-mycloud.png'
+import Imguser from '../../assets/img/user.jpg'
 
 export default class Login extends Component{
     constructor(props){
@@ -24,6 +26,9 @@ export default class Login extends Component{
             requesting:false,
 
         }
+        this.login = this.login.bind(this)
+        this.handlerEmail = this.handlerEmail.bind(this)
+        this.handlerPassword = this.handlerPassword.bind(this)
         this.validator = new SimpleReactValidator({
             messages: {
                 required:'Este campo deve ser preenchido',
@@ -47,15 +52,12 @@ export default class Login extends Component{
         window.document.title = 'login'
     }
 
-    login = async e => {
+    async login(e){
         e.preventDefault()
-        this.setState({msgErroLogin:false})
-        if (this.validator.fieldValid('emailLogin') && this.validator.fieldValid('passwordLogin')) {
             const request = {
                 email: this.state.emailLogin,
                 password : this.state.passwordLogin
             }
-
             try{
                 this.setState({requesting:true})
                 const response = await api.post('auth/authenticate',request)
@@ -86,10 +88,6 @@ export default class Login extends Component{
                 }
                 //console.log(Object.getOwnPropertyDescriptors(err));
             }
-        } else {
-            this.validator.showMessages();
-            this.forceUpdate();
-        }
 
     }
 
@@ -136,6 +134,13 @@ export default class Login extends Component{
             this.forceUpdate();
         }
     }
+    handlerEmail(e){
+        this.setState({emailLogin:e.target.value})
+    }
+    handlerPassword(e){
+        this.setState({passwordLogin:e.target.value})
+    }
+
     handlerPasswords = ()=>{
         return this.state.passwordRegister === this.state.confirmPasswordRegister
 
@@ -165,72 +170,28 @@ export default class Login extends Component{
             return <Redirect to={redirect} exact={true}/>
         }
         return(
-            <div className="main-wrapper">
-                <div className="auth-wrapper d-flex no-block justify-content-center align-items-center bg-dark">
-                    <div className="auth-box bg-dark border-top border-secondary">
-
-             {formLogin?<div id="loginform">
-                            <div className="text-center p-t-20 p-b-20 box-img">
-                                <span className="db"><img src={Imglogo} width='178px' alt="logo" /></span>
+            <TeplateAutenticacao>
+                <div id="loginform">
+                    <div className="text-center p-t-20 p-b-20 box-img">
+                        <span className="db"><img src={Imglogo} width='178px' alt="logo" /></span>
+                    </div>
+                    <FormLogin 
+                        onSubmit = {this.login}
+                        handlerEmail = {this.handlerEmail}
+                        handlerPassword = {this.handlerPassword}
+                        msgErroLogin ={msgErroLogin}
+                        requesting = {requesting}
+                        emailLogin = {emailLogin}
+                        passwordLogin = {passwordLogin}
+                    />
+                    <div className="row border-top border-secondary">
+                        <div className="col-12">
+                            <div className="p-t-20 divbuttons">
+                                <Link to={'/erro404'} className="btn btn-success float-left">Cadastre-se</Link>
                             </div>
-                            <form className="form-horizontal m-t-20" onSubmit={e=>this.login(e)}>
-                                <div className="row p-b-30" id='divform'>
-                                    <div className="col-12">
-                                        {msgErroLogin?
-                                            <div style={{color:'red'}} className='text-center'>
-                                                {msgErroLogin}
-                                            </div>
-                                        :null}
-                                        <div style={{color:'red'}}>
-                                            {this.validator.message('emailLogin', emailLogin, 'required|email')}
-                                        </div>
-
-                                        <div className="input-group mb-3">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text bg-success text-white" id="basic-addon1"><i className="ti-email"></i></span>
-                                            </div>
-                                            <input onChange={e=>{ this.setState({emailLogin:e.target.value}) } } value={emailLogin} type="text" className="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" required/>
-                                        </div>
-                                        
-                                        <div style={{color:'red'}}>
-                                            {this.validator.message('passwordLogin', passwordLogin, 'required')}
-                                        </div>
-
-                                        <div className="input-group mb-3"> 
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text bg-warning text-white" id="basic-addon2"><i className="ti-pencil"></i></span>
-                                            </div>
-                                            <input onChange={e=> {this.setState({passwordLogin:e.target.value})} } value={passwordLogin} type="password" className="form-control form-control-lg" placeholder="Senha" aria-label="Password" aria-describedby="basic-addon1" required/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="row border-top border-secondary">
-                                    <div className="col-12">
-                                        <div className="form-group">
-                                            <div className="p-t-20 divbuttons">
-                                                {requesting?
-                                                <button className="btn btn-block btn-lg btn-info" >
-                                                    <img src={ImgLoading} width='20px'/>
-                                                </button>:
-                                                <button className="btn btn-block btn-lg btn-info" >
-                                                    Fazer login
-                                                </button>}
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </form>
-                            <div className="row border-top border-secondary">
-                                <div className="col-12">
-                                    <div className="p-t-20 divbuttons">
-                                        <button className="btn btn-success float-right">Esqueceu sua senha?</button> 
-                                        <button className="btn btn-success float-left" onClick={e=>this.showRegister(e)}>Cadastre-se</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>:null}
+                        </div>
+                    </div>
+                </div>
                         
           {formRegister?<div id='registerform'>
                             <div className="text-center p-t-20 p-b-20 box-img">
@@ -265,23 +226,23 @@ export default class Login extends Component{
                                             </div>
                                             <input onChange={e => {this.setState({emailRegister:e.target.value}) }} value={emailRegister} type="text" className="form-control form-control-lg" placeholder="Email" aria-label="Username" aria-describedby="basic-addon1" required/>
                                         </div>
-                                        <div key={1000} style={{color:'red'}}>
+                                        <div  style={{color:'red'}}>
                                             {this.validator.message('passwordRegister', passwordRegister, 'required|min:6')}
                                         </div>
-                                        <div key={1008} className="input-group mb-3">
+                                        <div  className="input-group mb-3">
                                             <div className="input-group-prepend">
                                                 <span className="input-group-text bg-warning text-white" id="basic-addon2"><i className="ti-pencil"></i></span>
                                             </div>
                                             <input key={1004} onChange={e => {this.setState({passwordRegister:e.target.value})}} value={passwordRegister.toString()} type="password" className="form-control form-control-lg" placeholder="Senha" aria-label="Password" aria-describedby="basic-addon1" required/>
                                         </div>
-                                        <div key={1001} style={{color:'red'}}>
+                                        <div  style={{color:'red'}}>
                                             {this.validator.message('confirmPasswordRegister', confirmPasswordRegister, 'required|min:6|passowordEqual')}
                                         </div>
-                                        <div key={1009} className="input-group mb-3">
+                                        <div  className="input-group mb-3">
                                             <div className="input-group-prepend">
                                                 <span className="input-group-text bg-info text-white" id="basic-addon2"><i className="ti-pencil"></i></span>
                                             </div>
-                                            <input key={1003} onChange={e => {this.setState({confirmPasswordRegister:e.target.value})}} value={confirmPasswordRegister.toString()} type="password" className="form-control form-control-lg" placeholder="Confirmação de senha" aria-label="Password" aria-describedby="basic-addon1" required/>
+                                            <input  onChange={e => {this.setState({confirmPasswordRegister:e.target.value})}} value={confirmPasswordRegister.toString()} type="password" className="form-control form-control-lg" placeholder="Confirmação de senha" aria-label="Password" aria-describedby="basic-addon1" required/>
                                         </div>
                                     </div>
                                 </div>
@@ -309,9 +270,7 @@ export default class Login extends Component{
                                 </div>
                             </div>
                         </div>:null}
-                    </div>
-                </div>
-            </div>
+            </TeplateAutenticacao>
 
         )
     }
