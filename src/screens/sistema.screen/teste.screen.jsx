@@ -1,34 +1,29 @@
 import React,{Component} from 'react'
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import Divider from '@material-ui/core/Divider';
+import Menu from '../../components/menu/menu.component'
 
 export default class Mycloud extends Component{
 	constructor(props){
 		super(props)
 		this.state={
-			drawer:false
+			showDrawer:false
 		}
 	}
 	handleDrawerOpen(){
-		this.state({drawer:!this.state.drawer})
+		console.log('handledrawer')
+		this.setState({showDrawer:!this.state.showDrawer})
 	}
 
 	render(){
-
 		return(
-			<AppBar position="fixed">
-				<Toolbar>
-					<IconButton
-						onClick={()=>this.handleDrawerOpen()}
-					>
-					'	<MenuIcon/>
-					</IconButton>
-				</Toolbar>
-				<h1>ola, mundo</h1>
-			</AppBar>
-
+		<Menu/>
 		)
 	}
 }
