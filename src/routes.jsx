@@ -1,10 +1,11 @@
 import React from 'react'
 import {BrowserRouter,Switch,Route,Redirect} from 'react-router-dom'
-import LoginScreen from './screens/autenticação.screen/autenticacao.screen'
+import LoginScreen from './screens/autenticação.screen/login.screen'
+import RegisterScreen from './screens/autenticação.screen/register.screen'
+
 import MycloudScreen from './screens/sistema.screen/mycloud.screen'
 import Trash from './screens/sistema.screen/lixeira.screen'
 import Erro404 from './screens/erro.screen/erro404.screen'
-import Teste from './screens/sistema.screen/teste.screen'
 
 
 
@@ -13,8 +14,12 @@ export default () =>
 		<Switch>
 			[
 				<Route exact
-					path=  '/' 
+					path=  '/login' 
 					component = {LoginScreen} 
+				/>,
+				<Route exact
+					path=  '/register' 
+					component = {RegisterScreen} 
 				/>,
 				<Route exact
 					path=  '/mycloud' 
@@ -24,10 +29,7 @@ export default () =>
 					path='/mycloud/:id' 
 					component = {MycloudScreen} 
 				/>,
-				<Route exact
-					path='/teste' 
-					component = {Teste} 
-				/>,
+
 				<Route exact
 					path='/lixeira/:id' 
 					component = {Trash} 
@@ -36,10 +38,14 @@ export default () =>
 					path='/erro404' 
 					component = {Erro404} 
 				/>,
-				{/*<Redirect
+				<Redirect
+					from="/"
+					to='/login'
+				/>
+				<Redirect
 					from="*"
 					to='/erro404'
-				/>*/}
+				/>
 				
 			]
 			

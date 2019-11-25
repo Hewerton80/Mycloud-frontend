@@ -1,4 +1,5 @@
 import React,{Component} from 'react'
+import {Link} from 'react-router-dom'
 import api from '../../services/api'
 import Swal from 'sweetalert2'
 import Snackbar from '@material-ui/core/Snackbar'
@@ -29,22 +30,20 @@ export default class Mycloud extends Component{
 	}
 	async componentWillMount(){
 		if(!localStorage.getItem('auth-token')){
-			this.setState({redirect:'/'})
-			//window.location.href='/'
+			this.props.history.push('/')
 		}
 	}
 	async componentDidMount(){ 
-		//console.log(this.props)
-		if(localStorage.getItem('auth-token')){
-			window.document.title ='mycloud'
-			this.updateDashBoard(this.props.match.params.id)
-		}
+		console.log('didMount');
+		window.document.title ='mycloud'
+		this.updateDashBoard()
 	}
-	async updateDashBoard(id=localStorage.getItem('id.mycloud')){
+	async updateDashBoard(id = localStorage.getItem('id.mycloud')){
 		try{
 			this.setState({loadingDashboard:true})
 			const response = await api.get(`mycloud/${id}`)
-			//console.log(response)
+			console.log('update dashboard:');
+			console.log(response.data)
 			if(response.status===200){
 				this.setState({
 					idFolder 			  : response.data._id,
@@ -81,10 +80,10 @@ export default class Mycloud extends Component{
 		}
 	}
 	openFolder = async (e,_id) => {
-		e.preventDefault()
 		const id = typeof _id ==='object'?_id.id:_id
+		this.props.history.push(`/mycloud/${id}`)
 		this.updateDashBoard(id)
-		this.props.history.push(`${id}`)
+		
 	}
 	criaPasta = async e => {
 		try{
@@ -447,14 +446,6 @@ export default class Mycloud extends Component{
 				
 				}else{
 					window.open(file.url)
-					/*Swal.fire({
-						showConfirmButton: false,
-						showCloseButton: true,
-						html:`
-							<p>clique no link para acessar arquivo</p>
-							<h1><a href='${file.url}' target='blank_'> ${file.title}</a></h1>
-							`
-					})	*/
 				}
 
 			}
@@ -652,20 +643,6 @@ export default class Mycloud extends Component{
 			this.handlerErro(err)
 		}
 	}
-	handlerNav = (e,item) =>{
-		e.preventDefault()
-		if(item === 'inicio'){
-			this.updateDashBoard()
-			//this.setState({redirect:`/mycloud/${localStorage.getItem('id.mycloud')}`})
-			//window.location.href = `/mycloud/${localStorage.getItem('id.mycloud')}`
-
-		}
-		else{
-			this.setState({redirect:`/lixeira/${localStorage.getItem('id.trash')}`})
-			//window.location.href = `/trash/${localStorage.getItem('id.trash')}`
-
-		}
-	}
 	logout = e=>{
 		try{
 			e.preventDefault()
@@ -679,15 +656,15 @@ export default class Mycloud extends Component{
 		}
 
 	}
-	setHistory = e =>{
+	/*setHistory = e =>{
 		//console.log('evento history');
 		e.preventDefault()
 		//console.log(e)
 		this.updateDashBoard(this.props.match.params.id)
-	}
+	}*/
 	render(){
 
-		window.addEventListener("popstate", this.setHistory);
+		//window.addEventListener("popstate", this.setHistory);
 		if(this.state.redirect){
 			return <Redirect to={this.state.redirect} exact={true}/>
 		}
@@ -703,44 +680,48 @@ export default class Mycloud extends Component{
 			    <header  className="topbar" data-navbarbg="skin5">
 			        <nav className="navbar top-navbar navbar-expand-md navbar-dark">
 		                <div  className="navbar-header" data-logobg="skin5">
-		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i className="ti-menu ti-close"></i></a>
-		                    <a  className="navbar-brand" href='#' onClick={e => {e.preventDefault()}}>
+		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" style={{color:'#1F262D0'}}><i className="ti-menu ti-close"></i></a>
+		                    
+		                    <div className="navbar-brand">
 		                        <b className="logo-icon p-l-10">
-	                            	
+	                            	<h1><i className="fab fa-cloudversify"></i></h1>
 		                        </b>
 		                        <span className="logo-text">
 		                            <img src={Imglogo} alt="homepage" className="light-logo" />   
 		                        </span>
-		                    </a>
-		                    <a  className="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i className="ti-more"></i></a>
+		                    </div>
+		                    <a  className="topbartoggler d-block d-md-none waves-effect waves-light" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i className="ti-more"></i></a>
 		                </div>
 		             	<div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
 		             		<ul  className="navbar-nav float-left mr-auto">
 		                        <li className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
 		                        <li className="nav-item dropdown">
-		                            <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		                            <div className="nav-link dropdown-toggle"  id="navbarDropdown"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{cursor:'pointer'}}>
 		                            	<span className="d-none d-md-block"><i className="fas fa-plus"></i> Novo <i className="fa fa-angle-down"></i></span>
 		                            	<span  className="d-block d-md-none"><i className="fa fa-plus"></i></span>   
-		                            </a>
+		                            </div>
 		                            <div  className="dropdown-menu" aria-labelledby="navbarDropdown">
 		                                <button className="dropdown-item" onClick={e => this.criaPasta(e)}><i className="fas fa-folder-plus"></i> Nova pasta</button>
 		                                <button  className="dropdown-item" onClick={e => {inputOpenFileRef.current.click()}}><i className="fas fa-upload"></i> Upload de arquivo</button>
 		                            	<input   type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} style={{display: "none"}}/>
 		                            </div>
 		                        </li>
-		                        <li className="nav-item search-box"> <a className="nav-link waves-effect waves-dark" href="javascript:void(0)"><i className="ti-search"></i></a>
+		                        <li className="nav-item search-box"> 
+		                        	<a className="nav-link waves-effect waves-dark">
+		                        		<i className="ti-search"></i>
+		                        	</a>
 		                            <form className="app-search position-absolute">
 		                                <input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
 		                            </form>
 		                        </li>
 		             		</ul>
 
-		             		<ul  className="navbar-nav float-right">
+		             		<ul className="navbar-nav float-right">
 		                        <li className="nav-item dropdown">
-		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
+		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
 		                            <div  className="dropdown-menu dropdown-menu-right user-dd animated">
 		                            	<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
-		                                <a className="dropdown-item" href="javascript:void(0)" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+		                                <a className="dropdown-item" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
 		                            </div>
 		                        </li>
 		             		</ul>
@@ -756,9 +737,22 @@ export default class Mycloud extends Component{
 					<div className="scroll-sidebar">
 						<nav className="sidebar-nav">
 							<ul id="sidebarnav" className="p-t-30">
-	                    		<li className="sidebar-item selected"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'inicio')} aria-expanded="false"><i className="fas fa-cloud"></i><span className="hide-menu">Início</span></a></li>
-	                    		<li className="sidebar-item"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'lixeira')} aria-expanded="false"><i className="fas fa-trash"></i><span className="hide-menu">Lixeira</span></a></li>
-	                    		
+	                    		<li className="sidebar-item selected"> 
+		                    		<Link push to={`/mycloud/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+		                    			<i className="fas fa-cloud" />
+		                    			<span className="hide-menu">
+		                    				Início
+		                    			</span>
+		                    		</Link>
+	                    		</li>
+	                    		<li className="sidebar-item"> 
+		                    		<Link push to={`/lixeira/${localStorage.getItem('id.trash')}`} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+			                    		<i className="fas fa-trash"/>
+			                    		<span className="hide-menu">
+			                    			Lixeira
+			                    		</span>
+		                    		</Link>
+	                    		</li>
 							</ul>
 						</nav>
 					</div>
@@ -767,7 +761,6 @@ export default class Mycloud extends Component{
 
 
 {/*------------------------------------DashBoard---------------------------------------*/}
-
 				<div  className="page-wrapper">
 					<div  className="page-breadcrumb">
 	                	<div className="row">
@@ -777,7 +770,13 @@ export default class Mycloud extends Component{
 	                                	<ol className="breadcrumb">
 	                                		{pathList.map((path,i)=>{
 	                                			let [nome,id] = path.split(' -- ')
-	                                    		return(<li key={i.toString()} className="breadcrumb-item" ><a href ="" onClick={e => this.openFolder(e,{id})}>{i===0?'Início':nome}</a></li>)                             	
+	                                    		return(
+	                                    			<li key={i} className="breadcrumb-item" >
+	                                    				<Link push to={`/mycloud/${id}`} onClick={ ()=> this.updateDashBoard(id) }>
+	                                    					{i===0?'Início':nome}
+	                                    				</Link>
+	                                    			</li>
+	                                    		)                             	
 	                                		})}
 	                                	</ol>
 	                            	</nav>

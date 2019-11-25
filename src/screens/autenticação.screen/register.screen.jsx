@@ -1,24 +1,18 @@
 import React,{Component} from 'react'
 import api from '../../services/api'
-import {Redirect,Link } from "react-router-dom";
+import {Link } from "react-router-dom";
 import SimpleReactValidator from 'simple-react-validator'
 import TeplateAutenticacao from '../../components/templates/autenticação.template'
-import FormLogin from '../../components/ui/forms/formLogin'
+import FormRegister from './components/forms/formRegister'
 import ImgLoading from '../../assets/img/loading2.gif'
 import Imglogo from '../../assets/img/logo-mycloud.png'
+
 import Imguser from '../../assets/img/user.jpg'
 
-export default class Login extends Component{
+export default class Register extends Component{
     constructor(props){
         super(props)
         this.state = {
-            redirect:'',
-            formLogin:true,
-            formRegister:false,
-            msgErroLogin:'',
-            msgErroRegister:'',
-            emailLogin:'',
-            passwordLogin:'',
             nameRegister:'',
             emailRegister:'',
             passwordRegister:'',
@@ -26,9 +20,6 @@ export default class Login extends Component{
             requesting:false,
 
         }
-        this.login = this.login.bind(this)
-        this.handlerEmail = this.handlerEmail.bind(this)
-        this.handlerPassword = this.handlerPassword.bind(this)
         this.validator = new SimpleReactValidator({
             messages: {
                 required:'Este campo deve ser preenchido',
@@ -49,46 +40,7 @@ export default class Login extends Component{
         })
     }
     componentDidMount(){
-        window.document.title = 'login'
-    }
-
-    async login(e){
-        e.preventDefault()
-            const request = {
-                email: this.state.emailLogin,
-                password : this.state.passwordLogin
-            }
-            try{
-                this.setState({requesting:true})
-                const response = await api.post('auth/authenticate',request)
-                this.setState({requesting:false})
-                if(response.status===200){
-                    localStorage.setItem('auth-token',response.data.token)
-                    localStorage.setItem('user.name',response.data.user.name)
-                    localStorage.setItem('user.email',response.data.user.email)
-                    localStorage.setItem('id.mycloud',response.data.user.folders[0]._id)
-                    localStorage.setItem('id.trash',response.data.user.folders[1]._id)
-                    this.setState({
-                        redirect : `/mycloud/${response.data.user.folders[0]._id}`,
-
-                    })
-                    //window.location.href = `/mycloud/${this.state.id}`
-                }
-            }
-            catch(err){
-                this.setState({requesting:false})
-                if(err.message === 'Network Error'){
-                    this.setState({msgErroLogin:'Falha na conexão com o servidor'})
-                }
-                else if(err.message === 'Request failed with status code 400'){
-                    this.setState({msgErroLogin:'Email e/ou senha inválidas'})
-                }
-                else{
-                    this.setState({msgErroLogin:'Erro no login'})
-                }
-                //console.log(Object.getOwnPropertyDescriptors(err));
-            }
-
+        window.document.title = 'register'
     }
 
     register = async e => {
@@ -110,9 +62,7 @@ export default class Login extends Component{
                     localStorage.setItem('user.email',response.data.user.email)
                     localStorage.setItem('id.mycloud',response.data.user.folders[0]._id)
                     localStorage.setItem('id.trash',response.data.user.folders[1]._id)
-                    this.setState({
-                        redirect : `/mycloud/${response.data.user.folders[0]._id}`,
-                    })
+                    this.props.history.push(`/mycloud/${response.data.user.folders[0]._id}`)
                 }
             }
             catch(err){
@@ -134,73 +84,25 @@ export default class Login extends Component{
             this.forceUpdate();
         }
     }
-    handlerEmail(e){
-        this.setState({emailLogin:e.target.value})
-    }
-    handlerPassword(e){
-        this.setState({passwordLogin:e.target.value})
-    }
+
 
     handlerPasswords = ()=>{
         return this.state.passwordRegister === this.state.confirmPasswordRegister
 
     }
-
-
-    showRegister = e =>{
-        this.setState({
-            formLogin:false,
-            formRegister:true
-        })
-        window.document.title = 'cadastro'
-
-    }
-    showLogin = e => {
-        this.setState({
-            formLogin:true,
-            formRegister:false
-        })
-        window.document.title = 'login'
-    }
     render(){
-        const {redirect,formLogin,formRegister} = this.state
-        const {emailLogin,passwordLogin,msgErroLogin,msgErroRegister,requesting} = this.state
+        const {formRegister} = this.state
+        const {msgErroRegister,requesting} = this.state
         const {emailRegister,nameRegister,passwordRegister,confirmPasswordRegister} = this.state
-        if(redirect){
-            return <Redirect to={redirect} exact={true}/>
-        }
         return(
             <TeplateAutenticacao>
-                <div id="loginform">
-                    <div className="text-center p-t-20 p-b-20 box-img">
-                        <span className="db"><img src={Imglogo} width='178px' alt="logo" /></span>
-                    </div>
-                    <FormLogin 
-                        onSubmit = {this.login}
-                        handlerEmail = {this.handlerEmail}
-                        handlerPassword = {this.handlerPassword}
-                        msgErroLogin ={msgErroLogin}
-                        requesting = {requesting}
-                        emailLogin = {emailLogin}
-                        passwordLogin = {passwordLogin}
-                    />
-                    <div className="row border-top border-secondary">
-                        <div className="col-12">
-                            <div className="p-t-20 divbuttons">
-                                <Link to={'/erro404'} className="btn btn-success float-left">Cadastre-se</Link>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                        
-          {formRegister?<div id='registerform'>
+              <div id='registerform'>
                             <div className="text-center p-t-20 p-b-20 box-img">
                                 <span className="db"><img src={Imglogo} alt="logo" /></span>
                             </div>
                     
                             <form className="form-horizontal m-t-20" onSubmit={e => this.register(e)}>
                                 <div className="row p-b-30">
-
                                     <div className="col-12">
                                         {msgErroRegister?
                                             <div style={{color:'red'}} className='text-center'>
@@ -256,20 +158,22 @@ export default class Login extends Component{
                                                 </button>:
                                                 <button className="btn btn-block btn-lg btn-info" >
                                                     Fazer cadastro
-                                                </button>}                                            </div>
+                                                </button>}                                            
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </form>
                             <div className="row border-top border-secondary">
                                 <div className="col-12">
+                                    <Link to={'/login'} >
                                         <div className="p-t-20 divbuttons">
-                                            <button className="btn btn-success float-right">Esqueceu sua senha?</button> 
                                             <button className="btn btn-success float-left" onClick={e=>this.showLogin(e)}>Login</button>
                                         </div>
+                                    </Link>
                                 </div>
                             </div>
-                        </div>:null}
+                        </div>
             </TeplateAutenticacao>
 
         )

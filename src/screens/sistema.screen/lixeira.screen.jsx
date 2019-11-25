@@ -1,4 +1,6 @@
 import React,{Component} from 'react'
+import {Link} from 'react-router-dom'
+
 import api from '../../services/api'
 import Swal from 'sweetalert2'
 import Snackbar from '@material-ui/core/Snackbar'
@@ -29,16 +31,13 @@ export default class Lixeira extends Component{
 	}
 	async componentWillMount(){
 		if(!localStorage.getItem('auth-token')){
-			this.setState({redirect:'/'})
-			//window.location.href='/'
+			this.props.history.push('/')
 		}
 	}
 	async componentDidMount(){ 
-		console.log(this.props)
-		if(localStorage.getItem('auth-token')){
-			window.document.title ='mycloud/lixeira'
-			this.updateDashBoard(this.props.match.params.id)
-		}
+		window.document.title ='mycloud/lixeira'
+		this.updateDashBoard()
+		
 	}
 	async updateDashBoard(id=localStorage.getItem('id.trash')){
 		try{
@@ -361,21 +360,6 @@ export default class Lixeira extends Component{
 			this.handlerErro(err)
 		}
 	}
-	handlerNav = (e,item) =>{
-		e.preventDefault()
-		if(item === 'inicio'){
-			//this.updateDashBoard()
-			this.setState({redirect:`/mycloud/${localStorage.getItem('id.mycloud')}`})
-			//window.location.href = `/mycloud/${localStorage.getItem('id.mycloud')}`
-
-		}
-		else{
-			this.updateDashBoard()
-			//this.setState({redirect:`/lixeira/${localStorage.getItem('id.trash')}`})
-			//window.location.href = `/trash/${localStorage.getItem('id.trash')}`
-
-		}
-	}
 	logout = e=>{
 		try{
 			e.preventDefault()
@@ -389,15 +373,15 @@ export default class Lixeira extends Component{
 		}
 
 	}
-	setHistory = e =>{
+	/*setHistory = e =>{
 		console.log('evento history');
 		e.preventDefault()
 		console.log(e)
 		this.updateDashBoard(this.props.match.params.id)
-	}
+	}*/
 	render(){
 
-		window.addEventListener("popstate", this.setHistory);
+		//window.addEventListener("popstate", this.setHistory);
 		if(this.state.redirect){
 			return <Redirect to={this.state.redirect} exact={true}/>
 		}
@@ -413,21 +397,24 @@ export default class Lixeira extends Component{
 			    <header  className="topbar" data-navbarbg="skin5">
 			        <nav className="navbar top-navbar navbar-expand-md navbar-dark">
 		                <div  className="navbar-header" data-logobg="skin5">
-		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" href='#' onClick={e => {e.preventDefault()}}><i className="ti-menu ti-close"></i></a>
-		                    <a  className="navbar-brand" href='#' onClick={e => {e.preventDefault()}}>
+		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" style={{color:'#1F262D0'}}><i className="ti-menu ti-close"></i></a>
+		                    
+		                    <div className="navbar-brand">
 		                        <b className="logo-icon p-l-10">
 	                            	<h1><i className="fab fa-cloudversify"></i></h1>
 		                        </b>
 		                        <span className="logo-text">
 		                            <img src={Imglogo} alt="homepage" className="light-logo" />   
 		                        </span>
-		                    </a>
-		                    <a  className="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i className="ti-more"></i></a>
+		                    </div>
+		                    <a  className="topbartoggler d-block d-md-none waves-effect waves-light" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i className="ti-more"></i></a>
 		                </div>
 		             	<div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-		             		<ul  className="navbar-nav float-left mr-auto">
-		                        <li key='1' className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
-		                        <li key='3' className="nav-item search-box"> <a className="nav-link waves-effect waves-dark" href="javascript:void(0)"><i className="ti-search"></i></a>
+		             		<ul className="navbar-nav float-left mr-auto">
+		                        <li className="nav-item search-box"> 
+		                        	<a className="nav-link waves-effect waves-dark">
+		                        		<i className="ti-search"></i>
+		                        	</a>
 		                            <form className="app-search position-absolute">
 		                                <input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
 		                            </form>
@@ -435,11 +422,11 @@ export default class Lixeira extends Component{
 		             		</ul>
 
 		             		<ul  className="navbar-nav float-right">
-		                        <li key='1' className="nav-item dropdown">
-		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
+		                        <li className="nav-item dropdown">
+		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
 		                            <div  className="dropdown-menu dropdown-menu-right user-dd animated">
 		                            	<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
-		                                <a className="dropdown-item" href="javascript:void(0)" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+		                                <a className="dropdown-item" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
 		                            </div>
 		                        </li>
 		             		</ul>
@@ -455,9 +442,22 @@ export default class Lixeira extends Component{
 					<div className="scroll-sidebar">
 						<nav className="sidebar-nav">
 							<ul id="sidebarnav" className="p-t-30">
-	                    		<li key='1' className="sidebar-item "> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'inicio')} aria-expanded="false"><i className="fas fa-cloud"></i><span className="hide-menu">Início</span></a></li>
-	                    		<li key='2' className="sidebar-item selected"> <a className="sidebar-link waves-effect waves-dark sidebar-link" onClick={e => this.handlerNav(e,'lixeira')} aria-expanded="false"><i className="fas fa-trash"></i><span className="hide-menu">Lixeira</span></a></li>
-	                    		
+	                    		<li className="sidebar-item "> 
+		                    		<Link push to={`/mycloud/${localStorage.getItem('id.mycloud')}`} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+		                    			<i className="fas fa-cloud" />
+		                    			<span className="hide-menu">
+		                    				Início
+		                    			</span>
+		                    		</Link>
+	                    		</li>
+	                    		<li className="sidebar-item selected"> 
+		                    		<Link push to={`/lixeira/${localStorage.getItem('id.trash')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.trash'))} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+			                    		<i className="fas fa-trash"/>
+			                    		<span className="hide-menu">
+			                    			Lixeira
+			                    		</span>
+		                    		</Link>
+	                    		</li>
 							</ul>
 						</nav>
 					</div>

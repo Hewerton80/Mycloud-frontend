@@ -1,5 +1,5 @@
 import React from 'react'
-import ImgLoading from '../../../assets/img/loading2.gif'
+import ImgLoading from '../../../../assets/img/loading2.gif'
 export default props =>{
 	const {msgErroLogin,requesting, emailLogin ,passwordLogin} = props
 	const {handlerEmail,handlerPassword,onSubmit} = props
