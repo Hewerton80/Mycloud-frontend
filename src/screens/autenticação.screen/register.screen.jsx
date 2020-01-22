@@ -168,7 +168,7 @@ export default class Register extends Component{
                                 <div className="col-12">
                                     <Link to={'/login'} >
                                         <div className="p-t-20 divbuttons">
-                                            <button className="btn btn-success float-left"}>Login</button>
+                                            <button className="btn btn-success float-left">Login</button>
                                         </div>
                                     </Link>
                                 </div>
