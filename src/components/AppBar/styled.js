@@ -13,9 +13,10 @@ export const AppBarBrand = styled.div`
     display:flex;
     flex-direction:row;
     align-items:center;
-    max-width:250px;
+    flex: 0 0 30%;
+    max-width:30%;
     padding-left:30px;
-    width:100%;
+    
     height:100%;
     img{
         max-width:38px;
@@ -29,7 +30,8 @@ export const AppBarSeache = styled.div`
     height:70%;
     display:flex;
     flex-direction:row;
-    flex:.5;
+    flex: 0 0 50%;
+    max-width:50%;
     padding-left:30px;
     align-items:center;
     margin-left:15px;
@@ -55,10 +57,49 @@ export const AppBarProfile = styled.div`
     justify-content:flex-end;
     height:100%;
     padding: 0 20px;
-    flex:.5;
+    flex: 0 0 20%;
+    max-width:30%;
     img{
-        height:70%;
+        height:55px;
+        padding:5px 0;
         border-radius:50%;
-        cursor:pointer;
+        &:hover div{
+
+        }
     }
+    div.info-user{
+        background-color: #f9f9f9;
+        min-width: 350px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        padding:15px;
+        border:15px;
+        h6{
+            margin:0;
+            margin: 0px auto;
+        }
+        p#email{
+            
+            margin:0;
+            color:#767a7e;
+            margin-bottom:7px;
+            padding-bottom:7px;
+            border-bottom:1px solid #ccc;
+        }
+        p#logout{
+            display:flex;
+            flex-direction:row;
+            align-items:center;
+            margin:0;
+            cursor:pointer;
+            svg{
+                transform:scale(1.4);
+                padding-right:5px;
+            }
+            &:hover{
+                background-color:rgba(0,0,255,.2)
+            }
+        }
+    }
+    
+
 `

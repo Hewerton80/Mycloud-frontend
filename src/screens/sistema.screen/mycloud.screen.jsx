@@ -6,7 +6,10 @@ import Snackbar from '@material-ui/core/Snackbar'
 import FoldersAndFiles from '../../components/divFoldersAndFiles'
 import {SideBar,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
 import {AppBar,AppBarBrand,AppBarSeache,AppBarProfile} from "../../components/AppBar/styled"
-import {FaCloud,FaTrash,FaSearch} from "react-icons/fa"
+import {FaCloud,FaTrash,FaSearch,FaPowerOff} from "react-icons/fa"
+import {DropDown,DropDownContent,DropDownToogle} from "../../components/DropDown"
+import {Container,DashBoard} from "../../components/Containers/styled"
+import {Row} from "../../components/Grid/styled"
 import ImgLoading from '../../assets/img/loading2.gif'
 import Imglogo from '../../assets/img/logo-mycloud.png'
 import Imguser from '../../assets/img/user.jpg'
@@ -679,139 +682,139 @@ export default class Mycloud extends Component{
 		return(
 		<React.Fragment>
 
-			<div id="main-wrapper"> 	
 {/*---------------------------------NavBar--------------------------------------*/}
-				<AppBar>
-					<AppBarBrand>
-						<img src={driveLogo} alt="homepage"/> 
-						<span>Drive</span>
-					</AppBarBrand>
-					<AppBarSeache>
-						<FaSearch/>
-						<input 
-							type="text"
-							placeholder="Pesquise no Drive"
-						/>
-					</AppBarSeache>
-					<AppBarProfile>
-						<img src={Imguser} alt={localStorage.getItem('user.name')}/>
-					</AppBarProfile>
-		             	{/* <div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-		             		<ul  className="navbar-nav float-left mr-auto">
-		                        <li className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
-		                        <li className="nav-item dropdown">
-		                            <div className="nav-link dropdown-toggle"  id="navbarDropdown"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{cursor:'pointer'}}>
-		                            	<span className="d-none d-md-block"><i className="fas fa-plus"></i> Novo <i className="fa fa-angle-down"></i></span>
-		                            	<span  className="d-block d-md-none"><i className="fa fa-plus"></i></span>   
-		                            </div>
-		                            <div  className="dropdown-menu" aria-labelledby="navbarDropdown">
-		                                <button className="dropdown-item" onClick={e => this.criaPasta(e)}><i className="fas fa-folder-plus"></i> Nova pasta</button>
-		                                <button  className="dropdown-item" onClick={e => {inputOpenFileRef.current.click()}}><i className="fas fa-upload"></i> Upload de arquivo</button>
-		                            	<input   type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} style={{display: "none"}}/>
-		                            </div>
-		                        </li>
-		                        <li className="nav-item search-box"> 
-		                        	<a className="nav-link waves-effect waves-dark">
-		                        		<i className="ti-search"></i>
-		                        	</a>
-		                            <form className="app-search position-absolute">
-		                                <input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
-		                            </form>
-		                        </li>
-		             		</ul>
+			<AppBar>
+				<AppBarBrand>
+					<img src={driveLogo} alt="homepage"/> 
+					<span>Drive</span>
+				</AppBarBrand>
+				<AppBarSeache>
+					<FaSearch/>
+					<input 
+						type="text"
+						placeholder="Pesquise no Drive"
+					/>
 
-		             		<ul className="navbar-nav float-right">
-		                        <li className="nav-item dropdown">
-		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
-		                            <div  className="dropdown-menu dropdown-menu-right user-dd animated">
-		                            	<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
-		                                <a className="dropdown-item" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
-		                            </div>
-		                        </li>
-		             		</ul>
-		             	</div> */}
-			        </AppBar>
+				</AppBarSeache>
+				<AppBarProfile>
+					<DropDown>
+						<DropDownToogle id="dlogout">
+							<img src={Imguser} alt={localStorage.getItem('user.name')}/>
+						</DropDownToogle>
+						<DropDownContent translate={"-300px,0px"} id="dlogout">
+							<div className="info-user">
+								<h6>{localStorage.getItem('user.name')}</h6>
+								<p id="email">{localStorage.getItem('user.email')}</p>
+								<p id="logout" onClick={e=> this.logout(e)}><FaPowerOff/> Fazer Logout</p>
+							</div>
+						</DropDownContent>
+					</DropDown>
+				</AppBarProfile>
+					{/* <div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
+						<ul  className="navbar-nav float-left mr-auto">
+							<li className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
+							<li className="nav-item dropdown">
+								<div className="nav-link dropdown-toggle"  id="navbarDropdown"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{cursor:'pointer'}}>
+									<span className="d-none d-md-block"><i className="fas fa-plus"></i> Novo <i className="fa fa-angle-down"></i></span>
+									<span  className="d-block d-md-none"><i className="fa fa-plus"></i></span>   
+								</div>
+								<div  className="dropdown-menu" aria-labelledby="navbarDropdown">
+									<button className="dropdown-item" onClick={e => this.criaPasta(e)}><i className="fas fa-folder-plus"></i> Nova pasta</button>
+									<button  className="dropdown-item" onClick={e => {inputOpenFileRef.current.click()}}><i className="fas fa-upload"></i> Upload de arquivo</button>
+									<input   type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} style={{display: "none"}}/>
+								</div>
+							</li>
+							<li className="nav-item search-box"> 
+								<a className="nav-link waves-effect waves-dark">
+									<i className="ti-search"></i>
+								</a>
+								<form className="app-search position-absolute">
+									<input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
+								</form>
+							</li>
+						</ul>
+
+						<ul className="navbar-nav float-right">
+							<li className="nav-item dropdown">
+								<a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
+								<div  className="dropdown-menu dropdown-menu-right user-dd animated">
+									<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
+									<a className="dropdown-item" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
+								</div>
+							</li>
+						</ul>
+					</div> */}
+				</AppBar>
 {/*--------------------------------	-Final-NavBar--------------------------------------*/}
 
 
 
 {/*-------------------------------------SideBarr---------------------------------------*/}
-				<SideBar>
-					<SideBarNav>
-						<SideBarItem active> 
-							<Link push to={`/mycloud/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
-							    <FaCloud/>
-								<span className="hide-menu">
-									Início
-								</span>
-							</Link>
-						</SideBarItem>
-						<SideBarItem className="sidebar-item"> 
-							<Link push to={`/lixeira/${localStorage.getItem('id.trash')}`} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
-								<FaTrash/>
-								<span className="hide-menu">
-									Lixeira
-								</span>
-							</Link>
-						</SideBarItem>
-					</SideBarNav>
-				</SideBar>
+				<Container>
+					<SideBar>
+						<SideBarNav>
+							<SideBarItem active> 
+								<Link push to={`/mycloud/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+									<FaCloud/>
+									<span className="hide-menu">
+										Início
+									</span>
+								</Link>
+							</SideBarItem>
+							<SideBarItem className="sidebar-item"> 
+								<Link push to={`/lixeira/${localStorage.getItem('id.trash')}`} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+									<FaTrash/>
+									<span className="hide-menu">
+										Lixeira
+									</span>
+								</Link>
+							</SideBarItem>
+						</SideBarNav>
+					</SideBar>
 {/*-----------------------------------Final-SideBar------------------------------------*/}
 
 
 {/*------------------------------------DashBoard---------------------------------------*/}
-				<div  className="page-wrapper">
-					<div  className="page-breadcrumb">
-	                	<div className="row">
-	                    	<div className="col-12 d-flex no-block align-items-center">
-	                        	<div className=" text-left">
-	                            	<nav aria-label="breadcrumb">
-	                                	<ol className="breadcrumb">
-	                                		{pathList.map((path,i)=>{
-	                                			let [nome,id] = path.split(' -- ')
-	                                    		return(
-	                                    			<li key={i} className="breadcrumb-item" >
-	                                    				<Link push to={`/mycloud/${id}`} onClick={ ()=> this.updateDashBoard(id) }>
-	                                    					{i===0?'Início':nome}
-	                                    				</Link>
-	                                    			</li>
-	                                    		)                             	
-	                                		})}
-	                                	</ol>
-	                            	</nav>
-	                        	</div>
-	                    	</div>
-	                	</div>
-	            	</div>
-	            	{loadingDashboard?
-	            	<div  className='text-center'><img src={ImgLoading}/></div>:
+				<DashBoard>
+					<Row>
+						
+						{pathList.map((path,i)=>{
+							let [nome,id] = path.split(' -- ')
+							return(
+								<span key={i} className="breadcrumb-item" >
+									<Link push to={`/mycloud/${id}`} onClick={ ()=> this.updateDashBoard(id) }>
+										{i===0?'Início':nome}
+									</Link>
+								</span>
+							)                             	
+						})}
+						
+					</Row>
+				{loadingDashboard?
+				<div  className='text-center'><img src={ImgLoading}/></div>:
 
-					<div  className="container-fluid">
-	                	<div  className="row">
-	                		<FoldersAndFiles
-	                			idFolder={idFolder}
-	                			folders={folders}
-	                			openFolder={this.openFolder}
-	                			renameFolder={this.renameFolder}
-	                			downloadFolder={this.downloadFolder}
-	                			removeFolder={this.removeFolder}
-	                			getInfoFolder={this.getInfoFolder}
-	                			files={files}
-	                			openFile={this.openFile}
-	                			renameFile={this.renameFile}
-	                			removeFile={this.removeFile}
-	                			downloadFile={this.downloadFile}
-	                			getInfoFile={this.getInfoFile}
-	                		/>
-	                    </div>
-					</div>}
-   					<footer className="footer text-center">
-		        		Designed and Developed by <a href="https://wrappixel.com" target='_blank'>WrapPixel</a>.
-		    		</footer>
-				</div>
-
+				<div  className="container-fluid">
+					<div  className="row">
+						<FoldersAndFiles
+							idFolder={idFolder}
+							folders={folders}
+							openFolder={this.openFolder}
+							renameFolder={this.renameFolder}
+							downloadFolder={this.downloadFolder}
+							removeFolder={this.removeFolder}
+							getInfoFolder={this.getInfoFolder}
+							files={files}
+							openFile={this.openFile}
+							renameFile={this.renameFile}
+							removeFile={this.removeFile}
+							downloadFile={this.downloadFile}
+							getInfoFile={this.getInfoFile}
+						/>
+					</div>
+				</div>}
+			</DashBoard>
+		</Container>
 {/*-----------------------------------Final-DashBoard------------------------------------*/}
-			</div>
 
 			<Snackbar key={1001}
 					    anchorOrigin={{

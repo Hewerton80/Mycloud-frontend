@@ -1,8 +1,10 @@
 import styled from "styled-components"
 
 export const SideBar = styled.aside`
-    position:relative;
+    /* position:relative; */
     width:250px;
+    flex: 0 0 30%;
+    max-width:30%;
     height:100%;
     background-color:#fff;
 `
