@@ -17,21 +17,19 @@ export const DropDown = props =>{
 }
 
 export const DropDownToogle = props =>{
-  
-
   function handleClick(){
-    const nodeElement = document.querySelector(`#${props.id}`)
-    if(nodeElement && nodeElement.style.display==="block"){
-      nodeElement.style.display="none"
-    }else{
-      nodeElement.style.display="block"
+    const dropDownContentElement = document.querySelector(`#${props.htmlFor}`)
+    if(dropDownContentElement && dropDownContentElement.style.display==="block"){
+      dropDownContentElement.style.display="none"
+    }else if(dropDownContentElement && dropDownContentElement.style.display==="none"){
+      dropDownContentElement.style.display="block"
     }
   }
   document.addEventListener("click",e=>{
-    const nodeElement = document.querySelector(`#${props.id}`)
-    const dropDown123 = document.querySelector("#dropDown123")
-    if(nodeElement && dropDown123 && !dropDown123.contains(e.target) && !nodeElement.contains(e.target)){
-      nodeElement.style.display="none"
+    const dropDownToogleElement = document.querySelector(`#${props.id}`)
+    const dropDownContentElement = document.querySelector(`#${props.htmlFor}`)
+    if(dropDownContentElement && dropDownToogleElement && !dropDownToogleElement.contains(e.target) && !dropDownContentElement.contains(e.target)){
+      dropDownContentElement.style.display="none"
     }
   })
 
@@ -44,7 +42,7 @@ export const DropDownToogle = props =>{
   }
   return (
     <div 
-      id="dropDown123"
+      id={props.id}
       style={DropDownToogleStyle} 
       onClick={()=>{handleClick()}}
     >
@@ -61,7 +59,8 @@ export const DropDownContent = props =>{
     border:"0px",
     position: "absolute",
     background:"transparent",
-    transform: `translate(${props.translate?props.translate:"0px,0px"})`, 
+    transform: `translate(${props.translate?props.translate:"0px,0px"})`,
+    zIndex:1000
   }
   return (
     <div 

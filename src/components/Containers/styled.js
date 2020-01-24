@@ -5,7 +5,7 @@ export const Container =  styled.div`
     flex-direction:row;
 `
 export const DashBoard = styled.div`
-    padding:30px 15px;
-    flex: 0 0 70%;
-    max-width:70%;
+    padding:0 30px 0 15px;
+    flex: 0 0 80%;
+    max-width:80%;
 `

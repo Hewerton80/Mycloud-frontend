@@ -4,7 +4,7 @@ export const AppBar = styled.header`
     display:flex;
     flex-direction:row;
     height:65px;
-    
+    padding:0 30px;
     align-items:center;
     border-bottom:1px solid #ccc;
     background-color:rgb(250,250,250,0);
@@ -13,10 +13,8 @@ export const AppBarBrand = styled.div`
     display:flex;
     flex-direction:row;
     align-items:center;
-    flex: 0 0 30%;
-    max-width:30%;
-    padding-left:30px;
-    
+    flex: 0 0 20%;
+    max-width:20%;    
     height:100%;
     img{
         max-width:38px;
@@ -30,8 +28,8 @@ export const AppBarSeache = styled.div`
     height:70%;
     display:flex;
     flex-direction:row;
-    flex: 0 0 50%;
-    max-width:50%;
+    flex: 0 0 40%;
+    max-width:40%;
     padding-left:30px;
     align-items:center;
     margin-left:15px;
@@ -57,8 +55,8 @@ export const AppBarProfile = styled.div`
     justify-content:flex-end;
     height:100%;
     padding: 0 20px;
-    flex: 0 0 20%;
-    max-width:30%;
+    flex: 0 0 40%;
+    max-width:40%;
     img{
         height:55px;
         padding:5px 0;
@@ -73,6 +71,7 @@ export const AppBarProfile = styled.div`
         box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
         padding:15px;
         border:15px;
+        border-radius:10px;
         h6{
             margin:0;
             margin: 0px auto;
