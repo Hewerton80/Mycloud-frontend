@@ -7,7 +7,7 @@ import {SideBar,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
 import {AppBar,AppBarBrand,AppBarSeache,AppBarProfile} from "../../components/AppBar/styled"
 import {Folder,FolderHead,FolderOptions} from "../../components/Folder/styled"
 import {File,FileHeader,FileFooter,FileName,FileOptions} from "../../components/File/styled"
-import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaFolder,FaEllipsisV,FaFolderOpen,FaEdit,FaFileArchive,FaTrashAlt,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt} from "react-icons/fa"
+import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaFolder,FaEllipsisV,FaFolderOpen,FaEdit,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt} from "react-icons/fa"
 import {DropDown,DropDownContent,DropDownToogle} from "../../components/DropDown"
 import {Container,DashBoard} from "../../components/Containers/styled"
 import {Row,Col} from "../../components/Grid/styled"
@@ -15,7 +15,6 @@ import {NavLink} from "../../components/NavLink/styled"
 import Imguser from '../../assets/img/user.jpg'
 import driveLogo from '../../assets/img/google-drive.png'
 //import socket from 'socket.io-client'
-import { Redirect } from "react-router-dom";
 export default class Lixeira extends Component{
 
 	constructor(props){
@@ -389,7 +388,7 @@ export default class Lixeira extends Component{
 
 		//window.addEventListener("popstate", this.setHistory);
 		let {folders,files,pathList,erroConectionInternet,loadingDashboard} = this.state;
-		let {msgSnackBar,showSnackBar,idFolder} = this.state
+		let {msgSnackBar,showSnackBar} = this.state
 		pathList = pathList.split(' >> ')
 
 		return(
@@ -519,7 +518,7 @@ export default class Lixeira extends Component{
 										<File>
 											<FileHeader onDoubleClick={e => this.openFile(e,file._id)}>
 											{
-												(mimetype==='image')?<img src={file.url}/>:
+												(mimetype==='image')?<img src={file.url} alt={file.title}/>:
 												(mimetype==='video')?<FaFileVideo color='#f88'/>:
 												(mimetype==='application' && ext==='pdf')?<FaFilePdf color="#f00" />:
 												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.wordprocessingml.document')?<FaFileWord color="rgb(41,85,153)"/>:

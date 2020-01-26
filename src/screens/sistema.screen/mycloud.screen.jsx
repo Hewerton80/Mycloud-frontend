@@ -848,7 +848,7 @@ export default class Mycloud extends Component{
 										<File>
 											<FileHeader onDoubleClick={e => this.openFile(e,file._id)}>
 											{
-												(mimetype==='image')?<img src={file.url}/>:
+												(mimetype==='image')?<img src={file.url} alt={file.title}/>:
 												(mimetype==='video')?<FaFileVideo color='#f88'/>:
 												(mimetype==='application' && ext==='pdf')?<FaFilePdf color="#f00" />:
 												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.wordprocessingml.document')?<FaFileWord color="rgb(41,85,153)"/>:
