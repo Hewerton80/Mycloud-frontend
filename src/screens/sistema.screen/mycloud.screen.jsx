@@ -39,7 +39,7 @@ export default class Mycloud extends Component{
 
 	async componentDidMount(){ 
 		
-		window.document.title ='mycloud'
+		window.document.title ='drive'
 		this.updateDashBoard()
 		console.log('didMount');
 		console.log("props:",this.props)

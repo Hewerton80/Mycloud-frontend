@@ -40,7 +40,7 @@ export default class Lixeira extends Component{
 		}
 	}
 	async componentDidMount(){ 
-		window.document.title ='mycloud/lixeira'
+		window.document.title ='lixeira'
 		this.updateDashBoard()
 		
 	}
