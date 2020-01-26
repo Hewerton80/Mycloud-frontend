@@ -19,10 +19,6 @@ export const Col = styled.div`
         `
     )}
 
- 
-
-
-
     ${props=>(
         props.sm && css`
             @media (min-width: 576px) {

@@ -12,32 +12,27 @@ import Erro404 from './screens/erro.screen/erro404.screen'
 export default () => 
 	<BrowserRouter>
 		<Switch>
-			[
 				<Route exact
 					path=  '/login' 
 					component = {LoginScreen} 
-				/>,
+				/>
 				<Route exact
 					path=  '/register' 
 					component = {RegisterScreen} 
-				/>,
+				/>
 				<Route exact
-					path=  '/mycloud' 
+					path='/drive/:id' 
 					component = {MycloudScreen} 
-				/>,
-				<Route exact
-					path='/mycloud/:id' 
-					component = {MycloudScreen} 
-				/>,
+				/>
 
 				<Route exact
 					path='/lixeira/:id' 
 					component = {Trash} 
-				/>,
+				/>
 				<Route exact
 					path='/erro404' 
 					component = {Erro404} 
-				/>,
+				/>
 				<Redirect
 					from="/"
 					to='/login'
@@ -45,10 +40,7 @@ export default () =>
 				<Redirect
 					from="*"
 					to='/erro404'
-				/>
-				
-			]
-			
+				/>		
 		</Switch>
 	</BrowserRouter>
 

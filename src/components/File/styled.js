@@ -1,48 +1,69 @@
 import styled from "styled-components"
 
-export const Folder = styled.div`
+export const File = styled.div`
     display:flex;
-    flex-direction:row;
     align-items:center;
-    height:30px;
-    padding:7px 14px;
-    margin:7px;
-    border-radius:5px;
-    border:1px solid #ccc;
+    flex-direction:column;
     width:100%;
-    overflow:hidden;
-    cursor:pointer;
+    margin:7px;
+    border: 1px solid #ccc;
     &:hover {
         background-color:#e8f0fe;
     }
-    &:hover p#FileName{
+    &:hover p#foderName{
         color:#1967d2;
     }
-
-`;
-export const FolderHead= styled.div`
+    overflow:hidden;
+`
+export const FileHeader = styled.div`
+    justify-content:center;
+    display:flex;
+    align-items:center;
+    height: 150px;
+    width:100%;
+    overflow:hidden;
+    cursor: pointer;
+    img{
+        height:100%;
+        width:100%;
+        transition-duration:0.5s;
+    }
+    svg{
+        transform:scale(3.5);
+        transition-duration:0.5s;
+    }
+    
+    &:hover img{
+        transform:scale(1.3);
+    }
+    &:hover svg{
+        transform:scale(4.5);
+    }
+`
+export const FileFooter = styled.div`
     display:flex;
     flex-direction:row;
     align-items:center;
+    border-top: 1px solid #ccc;
+    max-height:30px;
+    width: calc(100% - 14px);
+    padding:7px 14px;
     overflow:hidden;
-    height:100%;
-    flex:.9;
-    svg{
-        transform:scale(1.5);
-        margin-right:15px;
-    }
-    p{
-        margin:0;
-        padding:0;
-    }
-
-` 
-export const FolderOptions=styled.div`
+ 
+`
+export const FileName = styled.div`
+    flex: .9;
     display:flex;
+    align-items:center;
+    overflow:hidden;
+`
+export const FileOptions = styled.div`
+display:flex;
     align-items:center;
     flex:.1;
     height:100%;
     span{
+        cursor:pointer;
         width:100%;
         display:flex;
         height:100%;
@@ -74,7 +95,6 @@ export const FolderOptions=styled.div`
             }
             svg{
                 margin:0 10px;
-                
             }
             p{
                 margin:0;
@@ -83,6 +103,5 @@ export const FolderOptions=styled.div`
             }
 
         }
-
     }
 `

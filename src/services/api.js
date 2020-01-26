@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-	//baseURL: 'https://mycloud-backend.herokuapp.com'
+	//baseURL: 'https://drive-backend.herokuapp.com'
 	baseURL : process.env.REACT_APP_BASE_URL || 'http://localhost:3001'
 })
 

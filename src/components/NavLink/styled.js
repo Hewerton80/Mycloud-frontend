@@ -25,6 +25,8 @@ export const NavLink = styled.nav`
             text-decoration:none;
             font-size:22px;
             color:#3c3f46;
+            width:100%;
+            height:100%;
             &:hover{
                 color:#3c3f46;
             }

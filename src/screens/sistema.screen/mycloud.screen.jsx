@@ -3,15 +3,16 @@ import {Link} from 'react-router-dom'
 import api from '../../services/api'
 import Swal from 'sweetalert2'
 import {Snackbar,CircularProgress} from '@material-ui/core'
-import {SideBar,SideBarBrand,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
+import {SideBar,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
 import {AppBar,AppBarBrand,AppBarSeache,AppBarProfile} from "../../components/AppBar/styled"
 import {Folder,FolderHead,FolderOptions} from "../../components/Folder/styled"
-import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaChevronRight,FaFolderPlus,FaUpload,FaFolder,FaPlus,FaEllipsisV,FaFolderOpen,FaEdit,FaFileArchive,FaTrashAlt,FaInfoCircle} from "react-icons/fa"
+import {File,FileHeader,FileFooter,FileName,FileOptions} from "../../components/File/styled"
+import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaChevronRight,FaFolderPlus,FaUpload,FaFolder,FaPlus,FaEllipsisV,FaFolderOpen,FaEdit,FaFileArchive,FaTrashAlt,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt} from "react-icons/fa"
 import {DropDown,DropDownContent,DropDownToogle} from "../../components/DropDown"
 import {Container,DashBoard} from "../../components/Containers/styled"
+import {ButtonPlus} from "../../components/ButtonPlus/styled"
 import {NavLink} from "../../components/NavLink/styled"
 import {Row,Col} from "../../components/Grid/styled"
-import ImgLoading from '../../assets/img/loading2.gif'
 import Imguser from '../../assets/img/user.jpg'
 import driveLogo from '../../assets/img/google-drive.png'
 //import socket from 'socket.io-client'
@@ -35,49 +36,51 @@ export default class Mycloud extends Component{
 			inputOpenFileRef : React.createRef()
 		}
 	}
-	async componentWillMount(){
-		if(!localStorage.getItem('auth-token')){
-			this.props.history.push('/')
-		}
-	}
+
 	async componentDidMount(){ 
-		console.log('didMount');
+		
 		window.document.title ='mycloud'
 		this.updateDashBoard()
+		console.log('didMount');
+		console.log("props:",this.props)
 	}
-	async updateDashBoard(id = localStorage.getItem('id.mycloud')){
+	componentWillUnmount(){
+		window.removeEventListener("popstate", this.setHistory);
+	}
+	// componentWillUpdate(){
+	// 	window.removeEventListener("popstate", this.setHistory);
+	// }
+	async updateDashBoard(id = this.props.match.params.id){
 		try{
 			this.setState({loadingDashboard:true})
 			const response = await api.get(`mycloud/${id}`)
 			console.log('update dashboard:');
 			console.log(response.data)
-			if(response.status===200){
-				this.setState({
-					idFolder 			  : response.data._id,
-					folders  			  : response.data.folders,
-					pathList 			  : response.data.pathList,
-					files    			  : response.data.files,
-					loadingDashboard      : false,
-					erroConectionInternet : false	
-				})
-			}
+			this.setState({
+				idFolder 			  : response.data._id,
+				folders  			  : response.data.folders,
+				pathList 			  : response.data.pathList,
+				files    			  : response.data.files,
+				loadingDashboard      : false,
+				erroConectionInternet : false	
+			})	
 		}
 		catch(err){
+			console.log(err)
 			this.handlerErro(err)
 		}		
 	}
 	handlerErro = async err => {
-		//console.log(err.message);
+		console.log(err);
 		this.setState({loadingDashboard:false})
 		if(err.message==='Network Error'){
 			this.setState({erroConectionInternet:true})
 		}
-		else if(err.message==='Request failed with status code 421'){
+		else if(err.response && err.response.status === 421){
 			this.setState({redirect:'/erro404'})
 		}
-		else if(err.message==='Request failed with status code 404'){
+		else if(err.response && err.response.status === 404){
 			this.setState({redirect:'/erro404'})
-			//window.location.href = '/erro404'
 		}
 		else{
 			this.setState({
@@ -88,9 +91,9 @@ export default class Mycloud extends Component{
 	}
 	openFolder = async (e,_id) => {
 		const id = typeof _id ==='object'?_id.id:_id
-		this.props.history.push(`/mycloud/${id}`)
+		console.log(id)
+		this.props.history.push(`/drive/${id}`)
 		this.updateDashBoard(id)
-		
 	}
 	criaPasta = async e => {
 		try{
@@ -150,7 +153,7 @@ export default class Mycloud extends Component{
 			this.handlerErro(err)
 		}
 	}
-	async renameFolder(e,id,name){
+	async renameFolder(e,folder,name){
 		try{
 			const {value} = await Swal.fire({
 				title:'Nome da pasta',
@@ -182,32 +185,42 @@ export default class Mycloud extends Component{
 					title: 'Renomeando'
 				})
 				Swal.showLoading()
-				const response = await api.put(`mycloud/update/folder/${id}`,request)
+				await api.put(`mycloud/update/folder/${folder._id}`,request)
 				//console.log(response.data) 
-				if(response.status===200){
-					//console.log('deu certo renomear')
-					const Toast = Swal.mixin({
-						toast: true,
-						position: 'bottom-start',
-						showConfirmButton: false,
-						timer:3000
-					});
-					Toast.fire({
-						type: 'success',
-						title: 'Pasta renomeada com sucesso'
+				//console.log('deu certo renomear')
+				const {folders} = this.state
+				this.setState({
+					folders:folders.map(f=>{
+						if(folder._id===f._id){
+							const folderRenamed = JSON.parse(JSON.stringify(f))
+							folderRenamed.title = value
+							console.log(folderRenamed)
+							return folderRenamed
+						}
+						return f
 					})
-					await this.updateDashBoard(response.data._id)
-				}else{
-					Swal.fire({
-						type: 'error',
-						title: 'Oops...',
-						text: 'Pasta não pôde ser renomeada!',
-					})	
-				}
+				})
+				const Toast2 = Swal.mixin({
+					toast: true,
+					position: 'bottom-start',
+					showConfirmButton: false,
+					timer:3000
+				});
+				Toast2.fire({
+					type: 'success',
+					title: 'Pasta renomeada com sucesso'
+				})
+				//await this.updateDashBoard(response.data._id)
+				
 			}
 		}
 		catch(err){
 			this.handlerErro(err)
+			Swal.fire({
+				type: 'error',
+				title: 'Oops...',
+				text: 'Pasta não pôde ser renomeada!',
+			})	
 		}
 	}
 	downloadFolder = async (e,id,idFolderFather) =>{
@@ -272,7 +285,7 @@ export default class Mycloud extends Component{
 			this.handlerErro(err)
 		}
 	}
-	removeFolder = async (e,id)=>{
+	removeFolder = async (e,folder)=>{
 		const {value} = await Swal.fire({
 			title: 'Tem certeza que quer mover essa pasta para lixeira?',
 			//text: "You won't be able to revert this!",
@@ -294,21 +307,23 @@ export default class Mycloud extends Component{
 					title: 'Movendo para lixeira'
 				})
 				Swal.showLoading()
-				const response = await api.put(`/mycloud/delete/folder/${id}`)
-				//console.log(response)
-				if(response.status===200){
-					const Toast = Swal.mixin({
-						toast: true,
-						position: 'bottom-start',
-						showConfirmButton: false,
-						timer: 3000
-					});
-					Toast.fire({
-						type: 'success',
-						title: 'Pasta movida para lixeira com sucesso'
-					})
-					this.updateDashBoard(response.data._id)
-				}
+				await api.put(`/mycloud/delete/folder/${folder._id}`)
+				const {folders} = this.state
+				this.setState({
+					folders:folders.filter(f=>f._id!==folder._id)
+				})
+				const Toast2 = Swal.mixin({
+					toast: true,
+					position: 'bottom-start',
+					showConfirmButton: false,
+					timer: 3000
+				});
+				Toast2.fire({
+					type: 'success',
+					title: 'Pasta movida para lixeira com sucesso'
+				})
+				//this.updateDashBoard(response.data._id)
+				
 			}
 			catch(err){
 				Swal.fire({
@@ -461,7 +476,7 @@ export default class Mycloud extends Component{
 			this.handlerErro(err)
 		}
 	}
-	renameFile = async(e,id,name) => {
+	renameFile = async(e,file,name) => {
 		try{
 			const {value} = await Swal.fire({
 				title:'Nome do arquivo',
@@ -497,32 +512,42 @@ export default class Mycloud extends Component{
 					title: 'Renomeando'
 				})
 				Swal.showLoading()
-				const response = await api.put(`mycloud/update/file/${id}`,request)
+				await api.put(`mycloud/update/file/${file._id}`,request)
 				//console.log(response.data) 
-				if(response.status===200){
-					//console.log('deu certo renomear')
-					const Toast = Swal.mixin({
-						toast: true,
-						position: 'bottom-start',
-						showConfirmButton: false,
-						timer:3000
-					});
-					Toast.fire({
-						type: 'success',
-						title: 'Arquivo renomeado com sucesso'
+				//console.log('deu certo renomear')
+				const {files} = this.state
+				this.setState({
+					files:files.map(f=>{
+						if(file._id===f._id){
+							const fileRenamed = JSON.parse(JSON.stringify(f))
+							fileRenamed.title = value
+							console.log(fileRenamed)
+							return fileRenamed
+						}
+						return f
 					})
-					this.updateDashBoard(response.data._id)
-				}else{
-					Swal.fire({
-						type: 'error',
-						title: 'Oops...',
-						text: 'Pasta não pôde ser renomeada!',
-					})	
-				}
+				})
+				const Toast1 = Swal.mixin({
+					toast: true,
+					position: 'bottom-start',
+					showConfirmButton: false,
+					timer:3000
+				});
+				Toast1.fire({
+					type: 'success',
+					title: 'Arquivo renomeado com sucesso'
+				})
+				//this.updateDashBoard(response.data._id)
+				
 			}
 		}
 		catch(err){
 			this.handlerErro(err)
+			Swal.fire({
+				type: 'error',
+				title: 'Oops...',
+				text: 'Arquivo não pôde ser renomeada!',
+			})	
 		}
 	}
 	downloadFile = async (e,file_url,file_name) =>{
@@ -572,7 +597,7 @@ export default class Mycloud extends Component{
 			this.handlerErro(err)
 		}
 	}
-	removeFile = async (e,id) => {
+	removeFile = async (e,file) => {
 		const {value} = await Swal.fire({
 			title: 'Tem certeza que quer mover esse arquivo para lixeira?',
 			//text: "You won't be able to revert this!",
@@ -594,21 +619,24 @@ export default class Mycloud extends Component{
 					title: 'Movendo para lixeira'
 				})
 				Swal.showLoading()
-				const response = await api.put(`/mycloud/delete/file/${id}`)
+				await api.put(`/mycloud/delete/file/${file._id}`)
 				//console.log(response)
-				if(response.status===200){
-					const Toast = Swal.mixin({
-						toast: true,
-						position: 'bottom-start',
-						showConfirmButton: false,
-						timer: 3000
-					});
-					Toast.fire({
-						type: 'success',
-						title: 'Arquivo movida para lixeira com sucesso'
-					})
-					this.updateDashBoard(this.state.idFolder)
-				}
+				const {files} = this.state
+				this.setState({
+					files:files.filter(f=>f._id!==file._id)
+				})
+				const Toast1 = Swal.mixin({
+					toast: true,
+					position: 'bottom-start',
+					showConfirmButton: false,
+					timer: 3000
+				});
+				Toast1.fire({
+					type: 'success',
+					title: 'Arquivo movida para lixeira com sucesso'
+				})
+				//this.updateDashBoard(this.state.idFolder)
+				
 			}
 			catch(err){
 				this.handlerErro(err)
@@ -663,15 +691,15 @@ export default class Mycloud extends Component{
 		}
 
 	}
-	/*setHistory = e =>{
+	setHistory = e =>{
 		//console.log('evento history');
 		e.preventDefault()
 		//console.log(e)
 		this.updateDashBoard(this.props.match.params.id)
-	}*/
+	}
 	render(){
 
-		//window.addEventListener("popstate", this.setHistory);
+		window.addEventListener("popstate", this.setHistory);
 		if(this.state.redirect){
 			return <Redirect to={this.state.redirect} exact={true}/>
 		}
@@ -689,93 +717,49 @@ export default class Mycloud extends Component{
 					<span>Drive</span>
 				</AppBarBrand>
 				<AppBarSeache>
-					<FaSearch/>
-					<input 
-						type="text"
-						placeholder="Pesquise no Drive"
-					/>
+					<div>
+						<FaSearch/>
+						<input 
+							type="text"
+							placeholder="Pesquise no Drive"
+						/>
+					</div>
 				</AppBarSeache>
 				<AppBarProfile>
-					<DropDown>
-						<DropDownToogle htmlFor="dlogout" id="dropDownUser">
-							<img src={Imguser} alt={localStorage.getItem('user.name')}/>
-						</DropDownToogle>
-						<DropDownContent translate={"-300px,0px"} id="dlogout">
-							<div className="info-user">
-								<h6>{localStorage.getItem('user.name')}</h6>
-								<p id="email">{localStorage.getItem('user.email')}</p>
-								<p id="logout" onClick={e=> this.logout(e)}><FaPowerOff/> Fazer Logout</p>
-							</div>
-						</DropDownContent>
-					</DropDown>
+					<div id="barProfile">
+						<DropDown>
+							<DropDownToogle htmlFor="dlogout" id="dropDownUser">
+								<img src={Imguser} alt={localStorage.getItem('user.name')}/>
+							</DropDownToogle>
+							<DropDownContent translate={"-300px,0px"} id="dlogout">
+								<div className="info-user">
+									<h6>{localStorage.getItem('user.name')}</h6>
+									<p id="email">{localStorage.getItem('user.email')}</p>
+									<p id="logout" onClick={e=> this.logout(e)}><FaPowerOff/> Fazer Logout</p>
+								</div>
+							</DropDownContent>
+						</DropDown>
+					</div>
 				</AppBarProfile>
-					{/* <div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-						<ul  className="navbar-nav float-left mr-auto">
-							<li className="nav-item d-none d-md-block"><a className="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)" data-sidebartype="mini-sidebar"><i className="mdi mdi-menu font-24"></i></a></li>
-							<li className="nav-item dropdown">
-								<div className="nav-link dropdown-toggle"  id="navbarDropdown"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{cursor:'pointer'}}>
-									<span className="d-none d-md-block"><i className="fas fa-plus"></i> Novo <i className="fa fa-angle-down"></i></span>
-									<span  className="d-block d-md-none"><i className="fa fa-plus"></i></span>   
-								</div>
-								<div  className="dropdown-menu" aria-labelledby="navbarDropdown">
-									<button className="dropdown-item" onClick={e => this.criaPasta(e)}><i className="fas fa-folder-plus"></i> Nova pasta</button>
-									<button  className="dropdown-item" onClick={e => {inputOpenFileRef.current.click()}}><i className="fas fa-upload"></i> Upload de arquivo</button>
-									<input   type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} style={{display: "none"}}/>
-								</div>
-							</li>
-							<li className="nav-item search-box"> 
-								<a className="nav-link waves-effect waves-dark">
-									<i className="ti-search"></i>
-								</a>
-								<form className="app-search position-absolute">
-									<input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
-								</form>
-							</li>
-						</ul>
-
-						<ul className="navbar-nav float-right">
-							<li className="nav-item dropdown">
-								<a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
-								<div  className="dropdown-menu dropdown-menu-right user-dd animated">
-									<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
-									<a className="dropdown-item" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
-								</div>
-							</li>
-						</ul>
-					</div> */}
 				</AppBar>
 {/*--------------------------------	-Final-NavBar--------------------------------------*/}
 
 
-
-{/*-------------------------------------SideBarr---------------------------------------*/}
 				<Container>
+{/*-------------------------------------SideBarr---------------------------------------*/}
+				
 					<SideBar>
-						<SideBarBrand>
-							<DropDown>
-								<DropDownToogle htmlFor="new" id="idToogle">
-									<button id="button-new"><FaPlus/> Novo</button>
-								</DropDownToogle>
-								<DropDownContent id="new">
-									<ul>
-										<li><FaFolderPlus/><p  onClick={e => this.criaPasta(e)}> Nova pasta</p></li>
-										<li><FaUpload/> <p  onClick={e => {inputOpenFileRef.current.click()}}>Upload de arquivo</p></li>
-										<input  type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} />
-									</ul>
-								</DropDownContent>
-							</DropDown>
-						</SideBarBrand>
 						<SideBarNav>
 							<SideBarItem active> 
-								<Link push to={`/mycloud/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+								<Link  to={`/drive/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} >
 									<FaCloud/>
 									<span className="hide-menu">
 										Início
 									</span>
 								</Link>
 							</SideBarItem>
-							<SideBarItem className="sidebar-item"> 
-								<Link push to={`/lixeira/${localStorage.getItem('id.trash')}`} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
+							<SideBarItem> 
+								<Link  to={`/lixeira/${localStorage.getItem('id.trash')}`}>
 									<FaTrash/>
 									<span className="hide-menu">
 										Lixeira
@@ -789,19 +773,20 @@ export default class Mycloud extends Component{
 
 {/*------------------------------------DashBoard---------------------------------------*/}
 					<DashBoard>
+						<div id="dashboard">
 						<Row>
 							<NavLink>
 								{pathList.map((path,i)=>{
 									let [nome,id] = path.split(' -- ')
 									return(
-										<>
+										<React.Fragment key={path}>
 										{i!==0 && <FaChevronRight/>}
 										<span key={i} className="breadcrumb-item" >
-											<Link push to={`/mycloud/${id}`} onClick={ ()=> this.updateDashBoard(id) }>
+											<Link to={`/drive/${id}`} onClick={ ()=> this.updateDashBoard(id) }>
 												{i===0?'Início':nome}
 											</Link>
 										</span>
-										</>
+										</React.Fragment>
 									)                             	
 								})}
 							</NavLink>
@@ -819,12 +804,12 @@ export default class Mycloud extends Component{
 						<>
 						<Row>
 							<Col xs={12} >
-								<p style={{margin:"7px"}}>Pastas</p>
+								{folders.length>0 && <p style={{margin:"7px"}}>Pastas</p>}
 							</Col>
 						</Row>
 						<Row>
 							{folders.map((folder,i)=>
-								<Col xs={12} sm={4} md={3} lg={3}>
+								<Col xs={12} sm={4} md={3} lg={3} key={folder.id.toString()}>
 									<Folder key={folder._id.toString()} onDoubleClick={e => this.openFolder(e,folder._id)}>
 										<FolderHead>
 											<FaFolder/>
@@ -837,11 +822,11 @@ export default class Mycloud extends Component{
 												</DropDownToogle>
 												<DropDownContent id={"folder"+i} translate="-124px,0px">
 													<ul>
-														<li><p  onClick={e => this.openFolder(e,folder._id)}><FaFolderOpen/>  Abrir</p></li>
-														<li><p  onClick={e => this.renameFolder(e,folder._id,folder.title)}><FaEdit/>  Renomear</p></li>
-														<li><p  onClick={e => this.downloadFolder(e,folder._id,idFolder)}><FaFileArchive/>  Baixar como zip</p></li>
-														<li><p  onClick={e => this.removeFolder(e,folder._id)}><FaTrashAlt/>  Remover</p>  </li>
-														<li><p  onClick={e => this.getInfoFolder(e,folder._id)}><FaInfoCircle/> Ver detalhes</p>	</li>
+														<li onClick={e => this.openFolder(e,folder._id)}><p><FaFolderOpen/>  Abrir</p></li>
+														<li onClick={e => this.renameFolder(e,folder,folder.title)}><p  ><FaEdit/>  Renomear</p></li>
+														<li onClick={e => this.downloadFolder(e,folder._id,idFolder)}><p><FaFileArchive/>  Baixar como zip</p></li>
+														<li onClick={e => this.removeFolder(e,folder)}><p><FaTrashAlt/>  Remover</p>  </li>
+														<li onClick={e => this.getInfoFolder(e,folder._id)}><p><FaInfoCircle/> Ver detalhes</p>	</li>
 													</ul>
 												</DropDownContent>
 											</DropDown>
@@ -852,80 +837,74 @@ export default class Mycloud extends Component{
 						</Row>
 						<Row>
 							<Col xs={12} >
-								<p style={{margin:"7px"}}>Arquivos</p>
+								{files.length>0 &&<p style={{margin:"7px"}}>Arquivos</p>}
 							</Col>
 						</Row>
-						{/* folders.map((folder,i) => (
-							<div key={folder._id.toString()} className='col-6 col-sm-4 col-md-3 col-lg-2'>
-								<div className="btn-group ">
-									<button onDoubleClick={e => this.openFolder(e,folder._id)} type="button" className="btn btn-primary botaoPasta">
-									<h1 className="font-light text-white"><i  className="fas fa-folder iconePasta"></i></h1>
-									</button>
-									<button  type="button" className=" btn btn-primary dropdown-toggle dropdown-toggle-split botaoPasta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-										<span className="sr-only iconePasta">Toggle Dropdown</span>
-									</button>
-									<div className="dropdown-menu">
-										<button className="dropdown-item" onClick={e => this.openFolder(e,folder._id)}><i className="far fa-folder-open"></i>  Abrir</button>
-										<button className="dropdown-item" onClick={e => this.renameFolder(e,folder._id,folder.title)}><i className="far fa-edit"></i>  Renomear</button>
-										<button className="dropdown-item" onClick={e => this.downloadFolder(e,folder._id,idFolder)}><i className="far fa-file-archive"></i>  Baixar como zip</button>
-										<button className="dropdown-item" onClick={e => this.removeFolder(e,folder._id)}><i className="fas fa-trash-alt"></i>  Remover</button>  
-										<button className="dropdown-item" onClick={e => this.getInfoFolder(e,folder._id)}><i className="fas fa-info-circle"></i> Ver detalhes</button>
-									</div>
-								</div>
-								<br/>
-								<p id="nomePasta">
-									{folder.title}
-								</p>
-							</div>	
-						)) */}
-						{/* files.map((file,i) => {
-							//console.log(file.mimetype)
-							let [mimetype,ext] = file.mimetype.split('/')
-							return(
-								<>
-								<div key={i.toString()} className='col-6 col-sm-4 col-md-3 col-lg-2'>
-									<div className="btn-group ">
-										<button onDoubleClick={e => this.openFile(e,file._id)} type="button" className="btn btn-primary botaoPasta">
-										<h1 className="font-light text-white">
-										{
-										(mimetype==='image')?<img src={file.url} className="iconeFile" />:
-										(mimetype==='video')?<i style={{color:'#f88'}} className="far fa-file-video iconeFile"></i>:
-										(mimetype==='application' && ext==='pdf')?<i style={{color:'#f00'}} className="far fa-file-pdf iconeFile"></i>:
-										(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.wordprocessingml.document')?<i style={{color:'rgb(41,85,153)'}} className="far fa-file-word iconeFile"></i>:
-										(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.spreadsheetml.sheet')?<i style={{color:'rgb(30,113,69)'}} className="far fa-file-excel iconeFile"></i>:
-										(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.presentationml.presentation')?<i style={{color:'rgb(208,69,37)'}} className="far fa-file-powerpoint iconeFile"></i>:
-										(mimetype==='audio')?<i style={{color:'rgb(18,142,214)'}} className="fas fa-music iconeFile"></i>:
-										<i style={{color:'rgb(67,37,82)'}}  className="fa fa-file-alt iconeFile"></i>
-										}
-										</h1>
-										</button>
-										<button  type="button" className=" btn btn-primary dropdown-toggle dropdown-toggle-split botaoPasta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-											<span className="sr-only iconeFile">Toggle Dropdown</span>
-										</button>
-										<div className="dropdown-menu">
-											<button className="dropdown-item" onClick={e => this.openFile(e,file._id)}><i className="far fa-folder-open"></i>  Abrir</button>
-											<button className="dropdown-item" onClick={e => this.renameFile(e,file._id,file.title)}><i className="far fa-edit"></i>  Renomear</button>
-											<button className="dropdown-item" onClick={e => this.removeFile(e,file._id)}><i className="fas fa-trash-alt"></i>  Remover</button>  
-											<button className="dropdown-item" onClick={e => this.downloadFile(e,file.url,file.title)}><i className="fas fa-file-download"></i> Download</button>
-											<button className="dropdown-item" onClick={e => this.getInfoFile(e,file._id)}><i className="fas fa-info-circle"></i> Ver detalhes</button>
-
-										</div>
-									</div>
-									<br/>
-									<p id="nomePasta">
-										{file.title}
-									</p>
-								</div>
-								</>
-							)
-						}) */}
+						<Row>
+							{files.map((file,i) => {
+								let [mimetype,ext] = file.mimetype.split('/')
+								return(
+									<Col xs={12} sm={6} md={4} lg={3} key={file.id.toString()}>
+										<File>
+											<FileHeader onDoubleClick={e => this.openFile(e,file._id)}>
+											{
+												(mimetype==='image')?<img src={file.url}/>:
+												(mimetype==='video')?<FaFileVideo color='#f88'/>:
+												(mimetype==='application' && ext==='pdf')?<FaFilePdf color="#f00" />:
+												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.wordprocessingml.document')?<FaFileWord color="rgb(41,85,153)"/>:
+												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.spreadsheetml.sheet')?<FaFileExcel color="rgb(30,113,69)"/>:
+												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.presentationml.presentation')?<FaFilePowerpoint color="rgb(208,69,37)"/>:
+												(mimetype==='audio')?<FaMusic color="rgb(18,142,214)"/>:
+												<FaFileAlt color="rgb(67,37,82)"/>
+											}	
+											</FileHeader>
+											<FileFooter>
+												<FileName>
+													<p id="filename">{file.title}</p>
+												</FileName>
+												<FileOptions>
+													<DropDown>
+														<DropDownToogle htmlFor={"file"+i} id={"fileToogle"+i}>
+															<span><FaEllipsisV/></span>
+														</DropDownToogle>
+														<DropDownContent id={"file"+i} translate="-124px,-190px">
+															<ul>
+																<li onClick={e => this.openFile(e,file._id)}><p><FaFolderOpen/>Abrir</p></li>
+																<li onClick={e => this.renameFile(e,file,file.title)}><p><FaEdit/> Renomear</p></li>
+																<li onClick={e => this.removeFile(e,file)}><p><FaTrashAlt/>  Remover</p></li> 
+																<li onClick={e => this.downloadFile(e,file.url,file.title)}><p><FaFileDownload/> Download</p></li>
+																<li onClick={e => this.getInfoFile(e,file._id)}><p><FaInfoCircle/> Ver detalhes</p></li>
+															</ul>
+														</DropDownContent>
+													</DropDown>
+												</FileOptions>	
+											</FileFooter>
+										</File>
+									</Col>
+								)
+							})
+							}
+						</Row>
 						</>
-					
 					}
+					</div>
+					<ButtonPlus>
+						<DropDown>
+							<DropDownToogle htmlFor="new" id="idToogle">
+								<button id="button-new"><FaPlus/> </button>
+							</DropDownToogle>
+							<DropDownContent id="new" translate="-250px,-150px">
+								<ul>
+									<li onClick={e => this.criaPasta(e)}><FaFolderPlus/><p> Nova pasta</p></li>
+									<li onClick={e => {inputOpenFileRef.current.click()}}><FaUpload/> <p>Upload de arquivo</p></li>
+									<input  type='file' ref={inputOpenFileRef} onChange={e => this.uploadFile(e,idFolder)} />
+								</ul>
+							</DropDownContent>
+						</DropDown>
+					</ButtonPlus>
 				</DashBoard>
-			</Container>
 {/*-----------------------------------Final-DashBoard------------------------------------*/}
-
+			</Container>
 			<Snackbar key={1001}
 				anchorOrigin={{
 					vertical: 'bottom',

@@ -1,13 +1,19 @@
 import React,{Component} from 'react'
 import {Link} from 'react-router-dom'
-
 import api from '../../services/api'
 import Swal from 'sweetalert2'
-import Snackbar from '@material-ui/core/Snackbar'
-
-import ImgLoading from '../../assets/img/loading2.gif'
-import Imglogo from '../../assets/img/logo-mycloud.png'
+import {Snackbar,CircularProgress} from '@material-ui/core'
+import {SideBar,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
+import {AppBar,AppBarBrand,AppBarSeache,AppBarProfile} from "../../components/AppBar/styled"
+import {Folder,FolderHead,FolderOptions} from "../../components/Folder/styled"
+import {File,FileHeader,FileFooter,FileName,FileOptions} from "../../components/File/styled"
+import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaFolder,FaEllipsisV,FaFolderOpen,FaEdit,FaFileArchive,FaTrashAlt,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt} from "react-icons/fa"
+import {DropDown,DropDownContent,DropDownToogle} from "../../components/DropDown"
+import {Container,DashBoard} from "../../components/Containers/styled"
+import {Row,Col} from "../../components/Grid/styled"
+import {NavLink} from "../../components/NavLink/styled"
 import Imguser from '../../assets/img/user.jpg'
+import driveLogo from '../../assets/img/google-drive.png'
 //import socket from 'socket.io-client'
 import { Redirect } from "react-router-dom";
 export default class Lixeira extends Component{
@@ -19,8 +25,8 @@ export default class Lixeira extends Component{
 			fileSelected:'',
 			idFolder: '',
 			pathList:'',
-			folders: '',
-			files:'',
+			folders: [],
+			files:[],
 			showSnackBar:false,
 			msgSnackBar:'',
 			erroConectionInternet:false,
@@ -382,165 +388,179 @@ export default class Lixeira extends Component{
 	render(){
 
 		//window.addEventListener("popstate", this.setHistory);
-		if(this.state.redirect){
-			return <Redirect to={this.state.redirect} exact={true}/>
-		}
 		let {folders,files,pathList,erroConectionInternet,loadingDashboard} = this.state;
-		let {inputOpenFileRef,msgSnackBar,showSnackBar,idFolder} = this.state
+		let {msgSnackBar,showSnackBar,idFolder} = this.state
 		pathList = pathList.split(' >> ')
 
 		return(
 		<React.Fragment>
 
-			<div id="main-wrapper"> 	
 {/*---------------------------------NavBar--------------------------------------*/}
-			    <header  className="topbar" data-navbarbg="skin5">
-			        <nav className="navbar top-navbar navbar-expand-md navbar-dark">
-		                <div  className="navbar-header" data-logobg="skin5">
-		                    <a className="nav-toggler waves-effect waves-light d-block d-md-none" style={{color:'#1F262D0'}}><i className="ti-menu ti-close"></i></a>
-		                    
-		                    <div className="navbar-brand">
-		                        <b className="logo-icon p-l-10">
-	                            	<h1><i className="fab fa-cloudversify"></i></h1>
-		                        </b>
-		                        <span className="logo-text">
-		                            <img src={Imglogo} alt="homepage" className="light-logo" />   
-		                        </span>
-		                    </div>
-		                    <a  className="topbartoggler d-block d-md-none waves-effect waves-light" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i className="ti-more"></i></a>
-		                </div>
-		             	<div  className="navbar-collapse collapse" id="navbarSupportedContent" data-navbarbg="skin5">
-		             		<ul className="navbar-nav float-left mr-auto">
-		                        <li className="nav-item search-box"> 
-		                        	<a className="nav-link waves-effect waves-dark">
-		                        		<i className="ti-search"></i>
-		                        	</a>
-		                            <form className="app-search position-absolute">
-		                                <input type="text" className="form-control" placeholder="Search &amp; enter"/> <a className="srh-btn"><i className="ti-close"></i></a>
-		                            </form>
-		                        </li>
-		             		</ul>
-
-		             		<ul  className="navbar-nav float-right">
-		                        <li className="nav-item dropdown">
-		                            <a  className="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic"  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src={Imguser} alt="user" className="rounded-circle" width="31"/></a>
-		                            <div  className="dropdown-menu dropdown-menu-right user-dd animated">
-		                            	<p className="dropdown-item"><i className="ti-user m-r-5 m-l-5"></i> {localStorage.getItem('user.name')}</p>
-		                                <a className="dropdown-item" onClick={e=> this.logout(e)}><i className="fa fa-power-off m-r-5 m-l-5"></i> Logout</a>
-		                            </div>
-		                        </li>
-		             		</ul>
-		             	</div>
-			        </nav>
-			    </header>
+			<AppBar>
+				<AppBarBrand>
+					<img src={driveLogo} alt="homepage"/> 
+					<span>Drive</span>
+				</AppBarBrand>
+				<AppBarSeache>
+					<div>
+						<FaSearch/>
+						<input 
+							type="text"
+							placeholder="Pesquise no Drive"
+						/>
+					</div>
+				</AppBarSeache>
+				<AppBarProfile>
+					<div id="barProfile">
+						<DropDown>
+							<DropDownToogle htmlFor="dlogout" id="dropDownUser">
+								<img src={Imguser} alt={localStorage.getItem('user.name')}/>
+							</DropDownToogle>
+							<DropDownContent translate={"-300px,0px"} id="dlogout">
+								<div className="info-user">
+									<h6>{localStorage.getItem('user.name')}</h6>
+									<p id="email">{localStorage.getItem('user.email')}</p>
+									<p id="logout" onClick={e=> this.logout(e)}><FaPowerOff/> Fazer Logout</p>
+								</div>
+							</DropDownContent>
+						</DropDown>
+					</div>
+				</AppBarProfile>
+				</AppBar>
 {/*--------------------------------	-Final-NavBar--------------------------------------*/}
 
 
-
+			<Container>
 {/*-------------------------------------SideBarr---------------------------------------*/}
-				<aside className="left-sidebar" data-sidebarbg="skin5">
-					<div className="scroll-sidebar">
-						<nav className="sidebar-nav">
-							<ul id="sidebarnav" className="p-t-30">
-	                    		<li className="sidebar-item "> 
-		                    		<Link push to={`/mycloud/${localStorage.getItem('id.mycloud')}`} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
-		                    			<i className="fas fa-cloud" />
-		                    			<span className="hide-menu">
-		                    				Início
-		                    			</span>
-		                    		</Link>
-	                    		</li>
-	                    		<li className="sidebar-item selected"> 
-		                    		<Link push to={`/lixeira/${localStorage.getItem('id.trash')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.trash'))} className="sidebar-link waves-effect waves-dark sidebar-link" aria-expanded="false">
-			                    		<i className="fas fa-trash"/>
-			                    		<span className="hide-menu">
-			                    			Lixeira
-			                    		</span>
-		                    		</Link>
-	                    		</li>
-							</ul>
-						</nav>
-					</div>
-				</aside>
+					<SideBar>
+						<SideBarNav>
+							<SideBarItem > 
+								<Link to={`/drive/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} >
+									<FaCloud/>
+									<span className="hide-menu">
+										Início
+									</span>
+								</Link>
+							</SideBarItem>
+							<SideBarItem active> 
+								<Link to={`/lixeira/${localStorage.getItem('id.trash')}`} >
+									<FaTrash/>
+									<span className="hide-menu">
+										Lixeira
+									</span>
+								</Link>
+							</SideBarItem>
+						</SideBarNav>
+					</SideBar>
 {/*-----------------------------------Final-SideBar------------------------------------*/}
 
 
 {/*------------------------------------DashBoard---------------------------------------*/}
-
-				<div  className="page-wrapper">
-	            	{loadingDashboard?
-	            	<div  className='text-center'><img src={ImgLoading}/></div>:
-
-					<div  className="container-fluid">
-	                	<div  className="row">
-	                		{/*botões de navegação de pastas*/}
-							{folders ? folders.map((folder,i) => (
-					            <div key={i.toString()} className='col-6 col-sm-4 col-md-3 col-lg-2'>
-						            <div className="btn-group ">
-						                <button type="button" className="btn btn-primary botaoPasta">
-										<h1 className="font-light text-white"><i  className="fas fa-folder iconePasta"></i></h1>
-						                </button>
-						                <button  type="button" className=" btn btn-primary dropdown-toggle dropdown-toggle-split botaoPasta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						                    <span className="sr-only iconePasta">Toggle Dropdown</span>
-						                </button>
-						                <div className="dropdown-menu">
-						                    <button className="dropdown-item" onClick={e => this.restoreFolder(e,folder._id)}><i className="far fa-edit"></i>  Restaurar</button>
-						                    <button className="dropdown-item" onClick={e => this.removePermanentementeFolder(e,folder._id)}><i className="fas fa-trash-alt"></i> Remover permanentemente</button>  
-						                    <button className="dropdown-item" onClick={e => this.getInfoFolder(e,folder._id)}><i className="fas fa-info-circle"></i> Ver detalhes</button>
-						                </div>
-						            </div>
-						            <br/>
-						            <p id="nomePasta">
-						            	{folder.title}
-						            </p>
-						        </div>
-						    )):null}
-
-							{files ? files.map((file,i) => {
+				<DashBoard>
+					<div id="dashboard">
+						<Row>
+							<NavLink>
+								<span className="breadcrumb-item">
+									Lixeira
+								</span>
+							</NavLink>
+						</Row>
+						{loadingDashboard?
+							<div  style={{
+								marginTop:"60px",
+								justifyContent: "center",
+								display: "flex"
+							}}>
+								<CircularProgress/>
+							</div>
+							:
+							<>
+							<Row>
+								<Col xs={12} >
+									{folders.length>0 && <p style={{margin:"7px"}}>Pastas</p>}
+								</Col>
+							</Row>
+							<Row>
+								{folders.map((folder,i)=>
+									<Col xs={12} sm={4} md={3} lg={3} key={folder.id.toString()}>
+										<Folder key={folder._id.toString()}>
+											<FolderHead>
+												<FaFolder/>
+												<p id="foderName">{folder.title}</p>
+											</FolderHead>
+											<FolderOptions>
+												<DropDown>
+													<DropDownToogle htmlFor={"folder"+i} id={"folderToogle"+i}>
+														<span><FaEllipsisV/></span>
+													</DropDownToogle>
+													<DropDownContent id={"folder"+i} translate="-124px,0px">
+														<ul>
+															<li onClick={e => this.restoreFolder(e,folder._id)}><p><FaEdit/>  Restaurar</p></li>
+															<li onClick={e => this.removePermanentementeFolder(e,folder._id)}><p  ><FaEdit/>  Remover permanentemente</p></li>
+															<li onClick={e => this.getInfoFolder(e,folder._id)}><p><FaInfoCircle/>  Ver detalhes</p></li>
+														</ul>
+													</DropDownContent>
+												</DropDown>
+											</FolderOptions>
+										</Folder>
+									</Col>
+								)}
+							</Row>
+							<Row>
+								<Col xs={12} >
+									{files.length>0 &&<p style={{margin:"7px"}}>Arquivos</p>}
+								</Col>
+							</Row>
+							<Row>
+							{files.map((file,i) => {
 								let [mimetype,ext] = file.mimetype.split('/')
 								return(
-					            <div key={i.toString()} className='col-6 col-sm-4 col-md-3 col-lg-2'>
-						            <div className="btn-group ">
-						                <button onDoubleClick={e => this.openFile(e,file._id)} type="button" className="btn btn-primary botaoPasta">
-										<h1 className="font-light text-white">
-										{
-										(mimetype==='image')?<img src={file.url} className="iconeFile" />:
-										(mimetype==='video')?<i style={{color:'#f88'}} className="far fa-file-video iconeFile"></i>:
-										(mimetype==='application' && ext==='pdf')?<i style={{color:'#f00'}} className="far fa-file-pdf iconeFile"></i>:
-										(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.wordprocessingml.document')?<i style={{color:'rgb(41,85,153)'}} className="far fa-file-word iconeFile"></i>:
-										(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.spreadsheetml.sheet')?<i style={{color:'rgb(30,113,69)'}} className="far fa-file-excel iconeFile"></i>:
-										(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.presentationml.presentation')?<i style={{color:'rgb(208,69,37)'}} className="far fa-file-powerpoint iconeFile"></i>:
-										(mimetype==='audio')?<i style={{color:'rgb(18,142,214)'}} className="fas fa-music iconeFile"></i>:
-										<i style={{color:'rgb(67,37,82)'}}  className="fa fa-file-alt iconeFile"></i>
-										}
-										</h1>						                </button>
-						                <button  type="button" className=" btn btn-primary dropdown-toggle dropdown-toggle-split botaoPasta" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						                    <span className="sr-only iconePasta">Toggle Dropdown</span>
-						                </button>
-						                <div className="dropdown-menu">
-						                    <button className="dropdown-item" onClick={e => this.openFile(e,file._id)}><i className="far fa-folder-open"></i>  Abrir</button>
-						                    <button className="dropdown-item" onClick={e => this.restoreFile(e,file._id)}><i className="fas fa-file-download"></i> restaurar</button>
-									        <button className="dropdown-item" onClick={e => this.removePermanentementeFile(e,file._id)}><i className="fas fa-trash-alt"></i>  Remover permanentemente</button>  
-											<button className="dropdown-item" onClick={e => this.getInfoFile(e,file._id)}><i className="fas fa-info-circle"></i> Ver detalhes</button>
-
-										</div>
-						            </div>
-						            <br/>
-						            <p id="nomePasta">
-						            	{file.title}
-						            </p>
-						        </div>
-						        )
-						    }):null}
-	                    </div>
-					</div>}
-   					<footer className="footer text-center">
-		        		Designed and Developed by <a href="https://wrappixel.com" target='_blank'>WrapPixel</a>.
-		    		</footer>
-				</div>
-
+									<Col xs={12} sm={6} md={4} lg={3} key={file.id.toString()}>
+										<File>
+											<FileHeader onDoubleClick={e => this.openFile(e,file._id)}>
+											{
+												(mimetype==='image')?<img src={file.url}/>:
+												(mimetype==='video')?<FaFileVideo color='#f88'/>:
+												(mimetype==='application' && ext==='pdf')?<FaFilePdf color="#f00" />:
+												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.wordprocessingml.document')?<FaFileWord color="rgb(41,85,153)"/>:
+												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.spreadsheetml.sheet')?<FaFileExcel color="rgb(30,113,69)"/>:
+												(mimetype==='application' && ext==='vnd.openxmlformats-officedocument.presentationml.presentation')?<FaFilePowerpoint color="rgb(208,69,37)"/>:
+												(mimetype==='audio')?<FaMusic color="rgb(18,142,214)"/>:
+												<FaFileAlt color="rgb(67,37,82)"/>
+											}	
+											</FileHeader>
+											<FileFooter>
+												<FileName>
+													<p id="filename">{file.title}</p>
+												</FileName>
+												<FileOptions>
+													<DropDown>
+														<DropDownToogle htmlFor={"lfile"+i} id={"lfileToogle"+i}>
+															<span><FaEllipsisV/></span>
+														</DropDownToogle>
+														<DropDownContent id={"lfile"+i} translate="-124px,-190px">
+															<ul>
+																<li onClick={e => this.openFile(e,file._id)}><p><FaFolderOpen/>  Abrir</p></li>
+																<li onClick={e => this.restoreFile(e,file._id)}><p><FaFileDownload/>  Restaurar</p></li>
+																<li onClick={e => this.removePermanentementeFile(e,file._id)}><p  ><FaEdit/>  Remover permanentemente</p></li>
+																<li onClick={e => this.getInfoFile(e,file._id)}><p><FaInfoCircle/>  Ver detalhes</p></li>
+															</ul>
+														</DropDownContent>
+													</DropDown>
+												</FileOptions>	
+											</FileFooter>
+										</File>
+									</Col>
+								)
+							})
+							}
+							</Row>
+							</>
+						}
+					</div>
+				</DashBoard>
 {/*-----------------------------------Final-DashBoard------------------------------------*/}
-			</div>
+			</Container>
 
 			<Snackbar key={1001}
 					    anchorOrigin={{
