@@ -9,6 +9,7 @@ export const NavLink = styled.nav`
     max-width:100%;
     border-bottom:1px solid #ccc;
     margin-bottom:7px;
+    flex-wrap:wrap;
     span{
         display:flex;
         align-items:center;
@@ -23,12 +24,15 @@ export const NavLink = styled.nav`
         }
         a{
             text-decoration:none;
-            font-size:22px;
+            font-size:14px;
             color:#3c3f46;
             width:100%;
             height:100%;
             &:hover{
                 color:#3c3f46;
+            }
+            @media (min-width: 832px) {
+                font-size:22px;
             }
         }
     }
