@@ -7,7 +7,7 @@ import {SideBar,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
 import {AppBar,AppBarBrand,AppBarSeache,AppBarProfile} from "../../components/AppBar/styled"
 import {Folder,FolderHead,FolderOptions} from "../../components/Folder/styled"
 import {File,FileHeader,FileFooter,FileName,FileOptions} from "../../components/File/styled"
-import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaFolder,FaEllipsisV,FaFolderOpen,FaEdit,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt} from "react-icons/fa"
+import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaFolder,FaEllipsisV,FaFolderOpen,FaEdit,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt,FaBars,FaLongArrowAltLeft} from "react-icons/fa"
 import {DropDown,DropDownContent,DropDownToogle} from "../../components/DropDown"
 import {Container,DashBoard} from "../../components/Containers/styled"
 import {Row,Col} from "../../components/Grid/styled"
@@ -31,6 +31,7 @@ export default class Lixeira extends Component{
 			erroConectionInternet:false,
 			loadingDashboard:false,
 			redirect:'',
+			showSideBar:false,
 			inputOpenFileRef : React.createRef()
 		}
 	}
@@ -387,7 +388,7 @@ export default class Lixeira extends Component{
 	render(){
 
 		//window.addEventListener("popstate", this.setHistory);
-		let {folders,files,pathList,erroConectionInternet,loadingDashboard} = this.state;
+		let {folders,files,pathList,erroConectionInternet,loadingDashboard,showSideBar} = this.state;
 		let {msgSnackBar,showSnackBar} = this.state
 		pathList = pathList.split(' >> ')
 
@@ -397,6 +398,9 @@ export default class Lixeira extends Component{
 {/*---------------------------------NavBar--------------------------------------*/}
 			<AppBar>
 				<AppBarBrand>
+					<button onClick={()=>this.setState({showSideBar:!showSideBar})}>
+						{showSideBar?<FaLongArrowAltLeft/>:<FaBars/>}
+					</button>
 					<img src={driveLogo} alt="homepage"/> 
 					<span>Drive</span>
 				</AppBarBrand>
@@ -431,7 +435,7 @@ export default class Lixeira extends Component{
 
 			<Container>
 {/*-------------------------------------SideBarr---------------------------------------*/}
-					<SideBar>
+					<SideBar show={showSideBar}>
 						<SideBarNav>
 							<SideBarItem > 
 								<Link to={`/drive/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} >

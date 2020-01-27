@@ -6,22 +6,28 @@ export const Container =  styled.div`
 `
 export const DashBoard = styled.div`
     
-    flex: 0 0 80%;
-    max-width:80%;
+    flex: 0 0 100%;
+    max-width:100%;
     div#dashboard{
         padding:0 30px 0 15px;
+    }
+    @media (min-width: 832px) {
+        flex: 0 0 80%;
+        max-width:80%;
     }
 `
 export const ContainerAuth = styled.div`
     display:flex;
     justify-content:center;
+    align-items:center;
+    height:100vh;
     form{
         display:flex;
         flex-direction:column;
         padding:48px 40px 36px 40px;
         width:100%;
         max-width:370px;
-        margin-top:30px;
+        /* margin-top:30px; */
         @media (min-width: 576px) {
             border:1px solid #ccc;
             border-radius:5px;

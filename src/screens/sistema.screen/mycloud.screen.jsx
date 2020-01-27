@@ -7,7 +7,7 @@ import {SideBar,SideBarNav,SideBarItem} from "../../components/SideBar/styled"
 import {AppBar,AppBarBrand,AppBarSeache,AppBarProfile} from "../../components/AppBar/styled"
 import {Folder,FolderHead,FolderOptions} from "../../components/Folder/styled"
 import {File,FileHeader,FileFooter,FileName,FileOptions} from "../../components/File/styled"
-import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaChevronRight,FaFolderPlus,FaUpload,FaFolder,FaPlus,FaEllipsisV,FaFolderOpen,FaEdit,FaFileArchive,FaTrashAlt,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt} from "react-icons/fa"
+import {FaCloud,FaTrash,FaSearch,FaPowerOff,FaChevronRight,FaFolderPlus,FaUpload,FaFolder,FaPlus,FaEllipsisV,FaFolderOpen,FaEdit,FaFileArchive,FaTrashAlt,FaInfoCircle,FaFileVideo,FaFilePdf,FaFileDownload,FaFileWord,FaFileExcel,FaFilePowerpoint,FaMusic,FaFileAlt,FaBars,FaLongArrowAltLeft} from "react-icons/fa"
 import {DropDown,DropDownContent,DropDownToogle} from "../../components/DropDown"
 import {Container,DashBoard} from "../../components/Containers/styled"
 import {ButtonPlus} from "../../components/ButtonPlus/styled"
@@ -33,6 +33,7 @@ export default class Mycloud extends Component{
 			erroConectionInternet:false,
 			loadingDashboard:false,
 			redirect:'',
+			showSideBar:false,
 			inputOpenFileRef : React.createRef()
 		}
 	}
@@ -704,7 +705,7 @@ export default class Mycloud extends Component{
 			return <Redirect to={this.state.redirect} exact={true}/>
 		}
 		let {folders,files,pathList,erroConectionInternet,loadingDashboard} = this.state;
-		let {inputOpenFileRef,msgSnackBar,showSnackBar,idFolder} = this.state
+		let {inputOpenFileRef,msgSnackBar,showSnackBar,idFolder,showSideBar} = this.state
 		pathList = pathList.split(' >> ')
 
 		return(
@@ -713,6 +714,9 @@ export default class Mycloud extends Component{
 {/*---------------------------------NavBar--------------------------------------*/}
 			<AppBar>
 				<AppBarBrand>
+					<button onClick={()=>this.setState({showSideBar:!showSideBar})}>
+						{showSideBar?<FaLongArrowAltLeft/>:<FaBars/>}
+					</button>
 					<img src={driveLogo} alt="homepage"/> 
 					<span>Drive</span>
 				</AppBarBrand>
@@ -748,7 +752,7 @@ export default class Mycloud extends Component{
 				<Container>
 {/*-------------------------------------SideBarr---------------------------------------*/}
 				
-					<SideBar>
+					<SideBar show={showSideBar}>
 						<SideBarNav>
 							<SideBarItem active> 
 								<Link  to={`/drive/${localStorage.getItem('id.mycloud')}`} onClick={()=> this.updateDashBoard(localStorage.getItem('id.mycloud'))} >
@@ -809,7 +813,7 @@ export default class Mycloud extends Component{
 						</Row>
 						<Row>
 							{folders.map((folder,i)=>
-								<Col xs={12} sm={4} md={3} lg={3} key={folder.id.toString()}>
+								<Col xs={6} sm={4} md={3} lg={3} key={folder.id.toString()}>
 									<Folder key={folder._id.toString()} onDoubleClick={e => this.openFolder(e,folder._id)}>
 										<FolderHead>
 											<FaFolder/>
@@ -844,7 +848,7 @@ export default class Mycloud extends Component{
 							{files.map((file,i) => {
 								let [mimetype,ext] = file.mimetype.split('/')
 								return(
-									<Col xs={12} sm={6} md={4} lg={3} key={file.id.toString()}>
+									<Col xs={6} sm={6} md={4} lg={3} key={file.id.toString()}>
 										<File>
 											<FileHeader onDoubleClick={e => this.openFile(e,file._id)}>
 											{

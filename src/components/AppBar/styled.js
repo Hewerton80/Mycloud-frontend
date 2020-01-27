@@ -16,6 +16,30 @@ export const AppBarBrand = styled.div`
     flex: 0 0 20%;
     max-width:20%;    
     height:100%;
+    
+    button{
+        background-color:transparent;
+        display:flex;
+        margin-right:35px;
+        align-items:center;
+        cursor:pointer;
+        border:0;
+        padding: 8px;
+        border-radius: 50%; 
+        transform:scale(1.5);
+        transition-duration:0.5s;       
+        &:active{
+            background-color:#8db5ec9e;
+        }
+        svg{
+            transform:scale(1.5);
+        }
+       
+        @media (min-width: 832px) {
+            display:none;
+        }
+
+    }
     img{
         max-width:38px;
     }
@@ -32,7 +56,7 @@ export const AppBarSeache = styled.div`
     max-width:40%;
     align-items:center;
     div{
-        @media (min-width: 576px) {
+        @media (min-width: 832px) {
             display:flex;
         }
         display:none;
@@ -58,7 +82,6 @@ export const AppBarSeache = styled.div`
         }
     }
    
-
 `
 export const AppBarProfile = styled.div`
     display:flex;
@@ -79,17 +102,19 @@ export const AppBarProfile = styled.div`
             height:45px;
             padding:5px 0;
             border-radius:50%;
-            &:hover div{
-
-            }
         }
         div.info-user{
             background-color: #f9f9f9;
-            min-width: 350px;
+            width: 250px;
+            transform: translate(100px, 10px);
             box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
             padding:15px;
             border:15px;
             border-radius:10px;
+            @media (min-width: 576px) {
+                width: 350px;
+                transform: translate(0px,0px);
+            }
             h6{
                 margin:0;
                 margin: 0px auto;

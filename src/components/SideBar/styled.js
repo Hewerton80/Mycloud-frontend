@@ -3,10 +3,18 @@ import styled from "styled-components"
 export const SideBar = styled.aside`
     /* position:relative; */
     width:250px;
-    flex: 0 0 20%;
-    max-width:20%;
+    position:fixed;
+    z-index:1;
     height:100%;
     background-color:#fff;
+    transform: translateX(${props=>props.show?"0px":"-250px"});
+    transition-duration:0.3s;
+    @media (min-width: 832px) {
+        position:relative;
+        flex: 0 0 20%;
+        max-width:20%;
+        transform: translateX(0px);
+    }
 `
 
 export const SideBarNav = styled.ul`
@@ -36,16 +44,13 @@ export const SideBarItem = styled.li`
         background-color:${props=>props.active?"#e8f0fe":"#cec4c430"};
     }
     svg{
-        
+
         transform: scale(1.2);
         margin-right:35px;
         color:${props=>props.active?"#1967d2":"#5f6368"};
     }
     span{
-        @media (min-width: 576px) {
-            display:inline;
-        }
-        display:none;
+        display:inline;
         color:${props=>props.active?"#1967d2":"#5f6368"};
     }
 `;
